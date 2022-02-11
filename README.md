@@ -12,6 +12,7 @@
 |Dehumidification|POST http://[IP_ADDRESS]/api/v/1/set/mode/dehumidification|||
 |Fan Only|POST http://[IP_ADDRESS]/api/v/1/set/mode/fanonly|||
 |Cooling|POST http://[IP_ADDRESS]/api/v/1/set/mode/cooling|||
+|Heating|POST http://[IP_ADDRESS]/api/v/1/set/mode/heating|||
 |Auto|POST http://[IP_ADDRESS]/api/v/1/set/mode/auto|||
 
 
