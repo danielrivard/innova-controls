@@ -1,19 +1,27 @@
 # innova-controls
 
-|Action|HTTP Verb|URL|Data Needed|Extra Info|
+All commands are sent to the unit itself through http at its network IP address: http://[IP_ADDRESS]/api/v/1.
+
+We just need to append the following commands and parameters where needed.
+
+Ex: ```curl http://192.168.1.155/api/v/1/status```
+
+It is highly recommended to set the IP of your unit to a static DHCP address.
+
+|Action|HTTP Verb|API Endpoint|Data Needed|Extra Info|
 |---|---|---|---|---|
-|Status|GET|http://[IP_ADDRESS]/api/v/1/status||Returns json object|
-|Power ON|POST|http://[IP_ADDRESS]/api/v/1/power/on|||
-|Power OFF|POST|http://[IP_ADDRESS]/api/v/1/power/off|||
-|Set point|POST|http://[IP_ADDRESS]/api/v/1/set/setpoint|p_temp=24||
-|Rotation ON|POST|http://[IP_ADDRESS]/api/v/1/set/feature/rotation|value=0||
-|Rotation OFF|POST|http://[IP_ADDRESS]/api/v/1/set/feature/rotation|value=7||
-|Fan Speed|POST|http://[IP_ADDRESS]/api/v/1/set/fan|value=[0-3]|0=auto,1=low,2=med,3=high,4=high++|
-|Dehumidification|POST|http://[IP_ADDRESS]/api/v/1/set/mode/dehumidification|||
-|Fan Only|POST|http://[IP_ADDRESS]/api/v/1/set/mode/fanonly|||
-|Cooling|POST|http://[IP_ADDRESS]/api/v/1/set/mode/cooling|||
-|Heating|POST|http://[IP_ADDRESS]/api/v/1/set/mode/heating|||
-|Auto|POST|http://[IP_ADDRESS]/api/v/1/set/mode/auto|||
+|Status|GET|/status||Returns json object|
+|Power ON|POST|/power/on|||
+|Power OFF|POST|/power/off|||
+|Set point|POST|/set/setpoint|p_temp=24||
+|Rotation ON|POST|/set/feature/rotation|value=0||
+|Rotation OFF|POST|/set/feature/rotation|value=7||
+|Fan Speed|POST|/set/fan|value=[0-3]|0=auto,1=low,2=med,3=high,4=high++|
+|Dehumidification|POST|/set/mode/dehumidification|||
+|Fan Only|POST|/set/mode/fanonly|||
+|Cooling|POST|/set/mode/cooling|||
+|Heating|POST|/set/mode/heating|||
+|Auto|POST|/set/mode/auto|||
 
 
 JSON returned by status endpoint:
