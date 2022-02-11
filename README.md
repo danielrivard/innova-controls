@@ -31,7 +31,7 @@ JSON returned by status endpoint:
         "cp": 0,
         "daynumber": 0,
         "fr": 7,                       <--- Fan Rotation: 0=on 7=off
-        "fs": 0,                       <--- Fan Speed: 0=auto, 1, 2, 3
+        "fs": 0,                       <--- Fan Speed: 0=auto, 1=low, 2=med, 3=high, 4=high++
         "heap": 11760,
         "heatingDisabled": 1,
         "heatingResistance": 0,
