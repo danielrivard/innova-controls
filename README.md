@@ -8,7 +8,7 @@
 |Set point|POST http://[IP_ADDRESS]/api/v/1/set/setpoint|p_temp=24||
 |Rotation ON|POST http://[IP_ADDRESS]/api/v/1/set/feature/rotation|value=0||
 |Rotation OFF|POST http://[IP_ADDRESS]/api/v/1/set/feature/rotation|value=7||
-|Fan Speed|POST http://[IP_ADDRESS]/api/v/1/set/fan|value=[0-3]|0=auto  + 1,2,3|
+|Fan Speed|POST http://[IP_ADDRESS]/api/v/1/set/fan|value=[0-3]|0=auto,1=low,2=med,3=high,4=high++|
 |Dehumidification|POST http://[IP_ADDRESS]/api/v/1/set/mode/dehumidification|||
 |Fan Only|POST http://[IP_ADDRESS]/api/v/1/set/mode/fanonly|||
 |Cooling|POST http://[IP_ADDRESS]/api/v/1/set/mode/cooling|||
@@ -49,7 +49,7 @@ JSON returned by status endpoint:
         "timerStatus": 0,
         "uptime": 159660,
         "uscm": 0,
-        "wm": 4                         <--- Mode: 1=cooling, 3=dehumidification, 4=fanonly. 5=auto
+        "wm": 4                         <--- Mode: 1=cooling, 2=heating, 3=dehumidification, 4=fanonly. 5=auto
     },
     "UID": "[MAC ADDRESS]",
     "deviceType": "001",
