@@ -17,10 +17,10 @@ It is highly recommended to set the IP of your unit to a static DHCP address.
 |Rotation ON|POST|/set/feature/rotation|value=0||
 |Rotation OFF|POST|/set/feature/rotation|value=7||
 |Fan Speed|POST|/set/fan|value=[0-4]|0=auto,1=low,2=med,3=high,4=high++|
-|Dehumidification|POST|/set/mode/dehumidification|||
-|Fan Only|POST|/set/mode/fanonly|||
 |Cooling|POST|/set/mode/cooling|||
 |Heating|POST|/set/mode/heating|||
+|Dehumidification|POST|/set/mode/dehumidification|||
+|Fan Only|POST|/set/mode/fanonly|||
 |Auto|POST|/set/mode/auto|||
 
 
