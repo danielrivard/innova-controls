@@ -1,6 +1,8 @@
-# innova-controls
+# Innova Air Conditioner Control API
 
-All commands are sent to the unit itself through http at its network IP address: http://[IP_ADDRESS]/api/v/1.
+Testing on [2.0 unit](https://www.innovaenergie.com/en/products/air-conditioning-without-outdoor-unit/2.0-verticale/2.0/)
+
+All commands are sent to the unit itself through http at its network IP address: **http://[IP_ADDRESS]/api/v/1**.
 
 We just need to append the following commands and parameters where needed.
 
