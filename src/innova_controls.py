@@ -39,6 +39,16 @@ class Innova:
         self._data = {}
         self._status = {}
 
+    def __send_command(self, command, data=None) -> bool:
+        cmd_url = f"{self._api_url}/{command}"
+        r = requests.post(cmd_url, data=data)
+
+        if r.status_code == 200:
+            result = json.loads(r.text)
+            if result["success"]:
+                return True
+        return False
+
     def update(self):
         status_url = f"{self._api_url}/{CMD_STATUS}"
         r = requests.get(status_url)
@@ -108,44 +118,32 @@ class Innova:
             return self._data["setup"]["serial"]
         return None
 
-    def send_command(self, command, data=None) -> bool:
-        cmd_url = f"{self._api_url}/{command}"
-        if data:
-            r = requests.post(cmd_url, data=data)
-        else:
-            r = requests.post(cmd_url)
-        if r.status_code == 200:
-            result = json.loads(r.text)
-            if result["success"]:
-                return True
-        return False
-
     def power_on(self):
-        if self.send_command(CMD_POWER_ON):
+        if self.__send_command(CMD_POWER_ON):
             self._status["ps"] = 1
 
     def power_off(self):
-        if self.send_command(CMD_POWER_OFF):
+        if self.__send_command(CMD_POWER_OFF):
             self._status["ps"] = 0
 
     def rotation_on(self):
-        if self.send_command(CMD_ROTATION, {"value": ROTATION_ON}):
+        if self.__send_command(CMD_ROTATION, {"value": ROTATION_ON}):
             self._status["fr"] = ROTATION_ON
 
     def rotation_off(self):
-        if self.send_command(CMD_ROTATION, {"value": ROTATION_OFF}):
+        if self.__send_command(CMD_ROTATION, {"value": ROTATION_OFF}):
             self._status["fr"] = ROTATION_OFF
 
     def set_temperature(self, temperature: int):
         data = {"p_temp": temperature}
-        if self.send_command(CMD_SET_TEMP, data):
+        if self.__send_command(CMD_SET_TEMP, data):
             self._status["sp"] = temperature
 
     def set_fan_speed(self, speed: int):
         data = {"value": speed}
-        if self.send_command(CMD_FAN_SPEED, data):
+        if self.__send_command(CMD_FAN_SPEED, data):
             self._status["fs"] = speed
 
     def set_mode(self, mode: Mode):
-        if self.send_command(mode.value["cmd"]):
+        if self.__send_command(mode.value["cmd"]):
             self._status["wm"] = mode.value["code"]
