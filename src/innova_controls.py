@@ -1,4 +1,4 @@
-import json
+import logging
 from enum import Enum
 
 import requests
@@ -34,28 +34,61 @@ class Mode(Enum):
 
 
 class Innova:
-    def __init__(self, host):
-        self._api_url = f"http://{host}/api/v/1"
+    """This is a class to control Innova heat pump units over http
+
+    Attributes:
+        For Local Mode
+        host: str
+            IP address of the Innova unit on the local network.
+            If omitted, cloud mode is assumed
+
+        For Cloud Mode (both serial and uid are mandatory)
+        serial: str
+            Serial number of the Innova unit (usually looks like INXXXXXXX)
+        uid: str)
+            The MAC address of the Innova unit. 
+    """
+    def __init__(self, host: str = None, serial: str = None, uid: str = None):
+        self._LOGGER = logging.getLogger(__name__)
+        if host is not None:
+            # Setup for local mode
+            self._api_url = f"http://{host}/api/v/1"
+            self._headers = None
+        else:
+            # Setup for cloud mode
+            self._api_url = "http://innovaenergie.cloud/api/v/1/"
+            self._headers = {
+                'X-serial': serial,
+                'X-UID': uid
+            }
         self._data = {}
         self._status = {}
 
     def __send_command(self, command, data=None) -> bool:
         cmd_url = f"{self._api_url}/{command}"
-        r = requests.post(cmd_url, data=data)
+        try:
+            r = requests.post(cmd_url, data=data, headers=self._headers)
 
-        if r.status_code == 200:
-            result = json.loads(r.text)
-            if result["success"]:
-                return True
-        return False
+            if r.status_code == 200:
+                if r.json()["success"]:
+                    return True
+            return False
+        except requests.exceptions.ConnectTimeout:
+            return False
+        except requests.exceptions.ConnectionError:
+            return False
+        except Exception as e:
+            self._LOGGER.error("Error while sending command", e)
 
     def update(self):
         status_url = f"{self._api_url}/{CMD_STATUS}"
-        r = requests.get(status_url)
-        data = json.loads(r.text)
-        self._data = data
-        if "RESULT" in data:
-            self._status = data["RESULT"]
+        try:
+            r = requests.get(status_url, headers=self._headers)
+            self._data = r.json()
+            if "RESULT" in self._data:
+                self._status = self._data["RESULT"]
+        except Exception as e:
+            self._LOGGER.error("Error getting status", e)
 
     @property
     def ambient_temp(self) -> int:
