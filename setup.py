@@ -15,7 +15,7 @@ long_description = (here / 'README.md').read_text(encoding='utf-8')
 
 setup(
     name='innova-controls',
-    version='1.0.0',
+    version='1.0.1',
     description='Innova Air Conditioner Control API',
     license='Apache',
     long_description=long_description,
@@ -30,7 +30,7 @@ setup(
         #   3 - Alpha
         #   4 - Beta
         #   5 - Production/Stable
-        'Development Status :: 3 - Alpha',
+        'Development Status :: 4 - Beta',
 
         'Intended Audience :: Developers',
         'Topic :: Internet :: WWW/HTTP',
