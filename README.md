@@ -2,11 +2,22 @@
 
 Tested on a [Innova 2.0 unit](https://www.innovaenergie.com/en/products/air-conditioning-without-outdoor-unit/2.0-verticale/2.0/)
 
+## Installation
+``` pip install innova_controls```
+
 ## Innova class usage
 
 ## Communication protocol
 
+### Local Mode
+
 All commands are sent to the unit itself through http at its network IP address: **http://[IP_ADDRESS]/api/v/1**.
+
+### Cloud Mode
+
+Commands are sent to Innova's cloud services at **http://innovaenergie.cloud/api/v/1**. The serial number and the MAC Address of the unit are needed when using cloud mode.
+
+### Protocol definition
 
 We just need to append the following commands and parameters where needed.
 
