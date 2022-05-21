@@ -31,7 +31,7 @@ It is highly recommended to set the IP of your unit to a static DHCP address.
 |Power ON|POST|/power/on|||
 |Power OFF|POST|/power/off|||
 |Scheduling ON|POST|/set/calendar/on|||
-|Scheduling OFF (Manual|POST|/set/calendar/off|||
+|Scheduling OFF (Manual)|POST|/set/calendar/off|||
 |Night Mode ON|POST|/set/feature/night|value=1||
 |Night Mode OFF|POST|/set/feature/night|value=0||
 |Set point|POST|/set/setpoint|p_temp=24||
