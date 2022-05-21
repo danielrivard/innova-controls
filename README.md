@@ -1,3 +1,5 @@
+[![PyPI version](https://badge.fury.io/py/innova-controls.svg)](https://badge.fury.io/py/innova-controls)
+
 # Innova Air Conditioner Control API
 
 Tested on a [Innova 2.0 unit](https://www.innovaenergie.com/en/products/air-conditioning-without-outdoor-unit/2.0-verticale/2.0/)
