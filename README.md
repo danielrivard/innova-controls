@@ -30,6 +30,10 @@ It is highly recommended to set the IP of your unit to a static DHCP address.
 |Status|GET|/status||Returns json object|
 |Power ON|POST|/power/on|||
 |Power OFF|POST|/power/off|||
+|Scheduling ON|POST|/set/calendar/on|||
+|Scheduling OFF (Manual|POST|/set/calendar/off|||
+|Night Mode ON|POST|/set/feature/night|value=1||
+|Night Mode OFF|POST|/set/feature/night|value=0||
 |Set point|POST|/set/setpoint|p_temp=24||
 |Rotation ON|POST|/set/feature/rotation|value=0||
 |Rotation OFF|POST|/set/feature/rotation|value=7||
@@ -51,12 +55,12 @@ JSON returned by status endpoint:
         "cfg_lastWorkingMode": 4,
         "cloudConfig": 1,
         "cloudStatus": 4,
-        "cm": 0,
+        "cm": 0,                       <--- Scheduling Mode: 0=off, 1=on
         "connectionStatus": 2,
         "coolingDisabled": 0,
         "cp": 0,
         "daynumber": 0,
-        "fr": 7,                       <--- Fan Rotation: 0=on 7=off
+        "fr": 7,                       <--- Fan Rotation: 0=on, 7=off
         "fs": 0,                       <--- Fan Speed: 0=auto, 1=low, 2=med, 3=high, 4=high++
         "heap": 11760,
         "heatingDisabled": 1,
@@ -66,16 +70,16 @@ JSON returned by status endpoint:
         "kl": 0,
         "lastRefresh": 3956,
         "ncc": 0,
-        "nm": 0,
+        "nm": 0,                        <--- Night Mode: 0=off, 1=on
         "ns": 0,
-        "ps": 0,                        <--- Power: 0=off, 1=on
+        "ps": 0,                        <--- Power: 0=off, 1=on 
         "pwd": "************",
         "sp": 26,                       <--- Temperature Set point
         "t": 16,                        <--- Ambient Temperature
         "timerStatus": 0,
         "uptime": 159660,
         "uscm": 0,
-        "wm": 4                         <--- Mode: 1=cooling, 2=heating, 3=dehumidification, 4=fanonly. 5=auto
+        "wm": 4                         <--- Mode: 0=heating, 1=cooling, 3=dehumidification, 4=fanonly. 5=auto
     },
     "UID": "[MAC ADDRESS]",
     "deviceType": "001",

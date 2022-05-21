@@ -26,8 +26,8 @@ _LOGGER = logging.getLogger(__name__)
 
 
 class Mode(Enum):
+    HEATING = {"cmd": "set/mode/heating", "code": 0, "status": "heating"}
     COOLING = {"cmd": "set/mode/cooling", "code": 1, "status": "cooling"}
-    HEATING = {"cmd": "set/mode/heating", "code": 2, "status": "heating"}
     DEHUMIDIFICATION = {
         "cmd": "set/mode/dehumidification",
         "code": 3,
@@ -51,34 +51,34 @@ class Innova:
         serial: str
             Serial number of the Innova unit (usually looks like INXXXXXXX)
         uid: str)
-            The MAC address of the Innova unit. 
+            The MAC address of the Innova unit.
     """
+
     def __init__(self, host: str = None, serial: str = None, uid: str = None):
-        _LOGGER.info(f"Initialize Innova Controls with host={host}, "
-                      "serial={serial}, uid={uid}")
+        _LOGGER.info(
+            f"Initialize Innova Controls with host={host}, "
+            "serial={serial}, uid={uid}"
+        )
         if host is not None:
             # Setup for local mode
-            _LOGGER.debug('Setting up local mode')
+            _LOGGER.debug("Setting up local mode")
             self._api_url = f"http://{host}/api/v/1"
             self._headers = None
         else:
             # Setup for cloud mode
-            _LOGGER.debug('Setting up cloud mode')
+            _LOGGER.debug("Setting up cloud mode")
             self._api_url = "http://innovaenergie.cloud/api/v/1"
-            self._headers = {
-                'X-serial': serial,
-                'X-UID': uid
-            }
+            self._headers = {"X-serial": serial, "X-UID": uid}
         self._data = {}
         self._status = {}
 
-    @retry(exceptions=Exception, tries=2, delay=2, logger=_LOGGER, 
-           log_traceback=True)
+    @retry(exceptions=Exception, tries=2, delay=2, logger=_LOGGER, log_traceback=True)
     def __send_command(self, command, data=None) -> bool:
         cmd_url = f"{self._api_url}/{command}"
         try:
-            r = requests.post(cmd_url, data=data, headers=self._headers, 
-                              timeout=_CONNECTION_TIMEOUT)
+            r = requests.post(
+                cmd_url, data=data, headers=self._headers, timeout=_CONNECTION_TIMEOUT
+            )
 
             if r.status_code == 200:
                 if r.json()["success"]:
@@ -95,8 +95,9 @@ class Innova:
     def update(self):
         status_url = f"{self._api_url}/{_CMD_STATUS}"
         try:
-            r = requests.get(status_url, headers=self._headers, 
-                             timeout=_CONNECTION_TIMEOUT)
+            r = requests.get(
+                status_url, headers=self._headers, timeout=_CONNECTION_TIMEOUT
+            )
             self._data = r.json()
             if "RESULT" in self._data:
                 self._status = self._data["RESULT"]
