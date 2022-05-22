@@ -35,7 +35,7 @@ class Mode(Enum):
     }
     FAN_ONLY = {"cmd": "set/mode/fanonly", "code": 4, "status": "fanonly"}
     AUTO = {"cmd": "set/mode/auto", "code": 5, "status": "auto"}
-    UNKNOWN = {}
+    UNKNOWN = {"code": -1}
 
 
 class Innova:
