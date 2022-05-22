@@ -92,17 +92,26 @@ class Innova:
             _LOGGER.error("Error while sending command", e)
             return False
 
-    def update(self):
+    @retry(exceptions=Exception, tries=2, delay=2, logger=_LOGGER, log_traceback=True)
+    def update(self) -> bool:
         status_url = f"{self._api_url}/{_CMD_STATUS}"
         try:
             r = requests.get(
                 status_url, headers=self._headers, timeout=_CONNECTION_TIMEOUT
             )
-            self._data = r.json()
-            if "RESULT" in self._data:
+            self._data: dict = r.json()
+            if self._data["success"] and "RESULT" in self._data:
+                # We don't need the password, so obfuscate it to avoid exposing it in logs
+                self._data["RESULT"]["pwd"] = "__OBFUSCATED__"
+                _LOGGER.debug(f"Status {status_url} received: {self._data}")
                 self._status = self._data["RESULT"]
+                return True
+            else:
+                _LOGGER.error(f"Error contacting the unit with response {r.text}")
+                return False
         except Exception as e:
             _LOGGER.error("Error getting status", e)
+            return False
 
     @property
     def ambient_temp(self) -> int:
