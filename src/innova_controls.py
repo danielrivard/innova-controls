@@ -169,9 +169,27 @@ class Innova:
         return None
 
     @property
-    def id(self) -> str:
+    def serial(self) -> str:
         if "setup" in self._data and "serial" in self._data["setup"]:
             return self._data["setup"]["serial"]
+        return None
+
+    @property
+    def uid(self) -> str:
+        if "UID" in self._data:
+            return self._data["UID"]
+        return None
+
+    @property
+    def software_version(self) -> str:
+        if "sw" in self._data and "V" in self._data["sw"]:
+            return self._data["sw"]["V"]
+        return None
+
+    @property
+    def ip_address(self) -> str:
+        if "net" in self._data and "ip" in self._data["net"]:
+            return self._data["net"]["ip"]
         return None
 
     def power_on(self):
