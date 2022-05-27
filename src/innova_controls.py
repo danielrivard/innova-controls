@@ -1,7 +1,7 @@
 import logging
 from enum import Enum
 
-import requests
+from aiohttp import ClientConnectionError, ClientSession, ServerTimeoutError
 from retry import retry
 
 _CMD_STATUS = "status"
@@ -54,11 +54,19 @@ class Innova:
             The MAC address of the Innova unit.
     """
 
-    def __init__(self, host: str = None, serial: str = None, uid: str = None):
+    def __init__(
+        self,
+        http_session: ClientSession,
+        host: str = None,
+        serial: str = None,
+        uid: str = None,
+    ):
         _LOGGER.info(
             f"Initialize Innova Controls with host={host}, "
             "serial={serial}, uid={uid}"
         )
+        self._http_session = http_session
+
         if host is not None:
             # Setup for local mode
             _LOGGER.debug("Setting up local mode")
@@ -73,33 +81,34 @@ class Innova:
         self._status = {}
 
     @retry(exceptions=Exception, tries=2, delay=2, logger=_LOGGER, log_traceback=True)
-    def __send_command(self, command, data=None) -> bool:
+    async def _send_command(self, command, data=None) -> bool:
         cmd_url = f"{self._api_url}/{command}"
         try:
-            r = requests.post(
+            r = await self._http_session.post(
                 cmd_url, data=data, headers=self._headers, timeout=_CONNECTION_TIMEOUT
             )
 
-            if r.status_code == 200:
-                if r.json()["success"]:
+            if r.status == 200:
+                result = await r.json(content_type=r.content_type)
+                if result["success"]:
                     return True
             return False
-        except requests.exceptions.ConnectTimeout:
+        except ServerTimeoutError:
             return False
-        except requests.exceptions.ConnectionError:
+        except ClientConnectionError:
             return False
         except Exception as e:
-            _LOGGER.error("Error while sending command", e)
+            _LOGGER.error(f"Error while sending command {cmd_url}", e)
             return False
 
     @retry(exceptions=Exception, tries=2, delay=2, logger=_LOGGER, log_traceback=True)
-    def update(self) -> bool:
+    async def async_update(self) -> bool:
         status_url = f"{self._api_url}/{_CMD_STATUS}"
         try:
-            r = requests.get(
+            r = await self._http_session.get(
                 status_url, headers=self._headers, timeout=_CONNECTION_TIMEOUT
             )
-            self._data: dict = r.json()
+            self._data: dict = await r.json(content_type=r.content_type)
             if self._data["success"] and "RESULT" in self._data:
                 # We don't need the password, so obfuscate it to avoid exposing it in logs
                 self._data["RESULT"]["pwd"] = "__OBFUSCATED__"
@@ -110,7 +119,7 @@ class Innova:
                 _LOGGER.error(f"Error contacting the unit with response {r.text}")
                 return False
         except Exception as e:
-            _LOGGER.error("Error getting status", e)
+            _LOGGER.error(f"Error getting status {status_url}", e)
             return False
 
     @property
@@ -192,32 +201,46 @@ class Innova:
             return self._data["net"]["ip"]
         return None
 
-    def power_on(self):
-        if self.__send_command(_CMD_POWER_ON):
+    async def power_on(self) -> bool:
+        if await self._send_command(_CMD_POWER_ON):
             self._status["ps"] = 1
+            return True
+        return False
 
-    def power_off(self):
-        if self.__send_command(_CMD_POWER_OFF):
+    async def power_off(self) -> bool:
+        if await self._send_command(_CMD_POWER_OFF):
             self._status["ps"] = 0
+            return True
+        return False
 
-    def rotation_on(self):
-        if self.__send_command(_CMD_ROTATION, {"value": _ROTATION_ON}):
+    async def rotation_on(self) -> bool:
+        if await self._send_command(_CMD_ROTATION, {"value": _ROTATION_ON}):
             self._status["fr"] = _ROTATION_ON
+            return True
+        return False
 
-    def rotation_off(self):
-        if self.__send_command(_CMD_ROTATION, {"value": _ROTATION_OFF}):
+    async def rotation_off(self) -> bool:
+        if await self._send_command(_CMD_ROTATION, {"value": _ROTATION_OFF}):
             self._status["fr"] = _ROTATION_OFF
+            return True
+        return False
 
-    def set_temperature(self, temperature: int):
+    async def set_temperature(self, temperature: int) -> bool:
         data = {"p_temp": temperature}
-        if self.__send_command(_CMD_SET_TEMP, data):
+        if await self._send_command(_CMD_SET_TEMP, data):
             self._status["sp"] = temperature
+            return True
+        return False
 
-    def set_fan_speed(self, speed: int):
+    async def set_fan_speed(self, speed: int) -> bool:
         data = {"value": speed}
-        if self.__send_command(_CMD_FAN_SPEED, data):
+        if await self._send_command(_CMD_FAN_SPEED, data):
             self._status["fs"] = speed
+            return True
+        return False
 
-    def set_mode(self, mode: Mode):
-        if self.__send_command(mode.value["cmd"]):
+    async def set_mode(self, mode: Mode) -> bool:
+        if await self._send_command(mode.value["cmd"]):
             self._status["wm"] = mode.value["code"]
+            return True
+        return False
