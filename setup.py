@@ -15,7 +15,7 @@ long_description = (here / "README.md").read_text(encoding="utf-8")
 
 setup(
     name="innova-controls",
-    version="1.0.7",
+    version="1.0.8",
     description="Innova Air Conditioner Control API",
     license="Apache",
     long_description=long_description,
@@ -42,7 +42,7 @@ setup(
     py_modules=["innova_controls"],
     # https://packaging.python.org/guides/distributing-packages-using-setuptools/#python-requires
     python_requires=">=3.9, <4",
-    install_requires=["requests>=2.27.1", "retry2>=0.9.3"],
+    install_requires=["aiohttp >= 3.0.0, < 4.0.0","retry2>=0.9.3"],
     project_urls={  # Optional
         "Bug Reports": "https://github.com/danielrivard/innova-controls/issues",
         "Source": "https://github.com/danielrivard/innova-controls/",
