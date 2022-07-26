@@ -17,6 +17,10 @@ _ROTATION_OFF = 7
 
 _CMD_FAN_SPEED = "set/fan"
 
+_CMD_NIGHT_MODE = "set/feature/night"
+_NIGHT_MODE_ON = 1
+_NIGHT_MODE_OFF = 0
+
 _MIN_TEMP = 16
 _MAX_TEMP = 31
 
@@ -172,6 +176,13 @@ class Innova:
         return 0
 
     @property
+    def night_mode(self) -> bool:
+        if "nm" in self._status:
+            if self._status["nm"] == _NIGHT_MODE_ON:
+                return True
+        return False
+
+    @property
     def name(self) -> str:
         if "setup" in self._data and "name" in self._data["setup"]:
             return self._data["setup"]["name"]
@@ -222,6 +233,18 @@ class Innova:
     async def rotation_off(self) -> bool:
         if await self._send_command(_CMD_ROTATION, {"value": _ROTATION_OFF}):
             self._status["fr"] = _ROTATION_OFF
+            return True
+        return False
+
+    async def night_mode_on(self) -> bool:
+        if await self._send_command(_CMD_NIGHT_MODE, {"value": _NIGHT_MODE_ON}):
+            self._status["nm"] = _NIGHT_MODE_ON
+            return True
+        return False
+
+    async def night_mode_off(self) -> bool:
+        if await self._send_command(_CMD_NIGHT_MODE, {"value": _NIGHT_MODE_OFF}):
+            self._status["nm"] = _NIGHT_MODE_OFF
             return True
         return False
 
