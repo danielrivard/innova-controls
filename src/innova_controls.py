@@ -264,6 +264,7 @@ class Innova:
 
     async def set_mode(self, mode: Mode) -> bool:
         if await self._send_command(mode.value["cmd"]):
+            self._status["ps"] = 1
             self._status["wm"] = mode.value["code"]
             return True
         return False
