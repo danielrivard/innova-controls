@@ -1,5 +1,5 @@
 from innova_device import InnovaDevice
-from network_facade import NetWorkFacade
+from network_functions import NetWorkFunctions
 
 class AirLeaf(InnovaDevice):
 
@@ -9,5 +9,5 @@ class AirLeaf(InnovaDevice):
         COOLING = {"cmd": "set/mode/cooling", "code": 5, "status": "cooling"}
         UNKNOWN = {"code": -1}
 
-    def __init__(self, network_facade: NetWorkFacade) -> None:
+    def __init__(self, network_facade: NetWorkFunctions) -> None:
         super().__init__(network_facade)

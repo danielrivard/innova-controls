@@ -1,6 +1,6 @@
 from enum import Enum
 from innova_device import InnovaDevice
-from network_facade import NetWorkFacade
+from network_functions import NetWorkFunctions
 
 
 class TwoPointZero(InnovaDevice):
@@ -17,5 +17,5 @@ class TwoPointZero(InnovaDevice):
         AUTO = {"cmd": "set/mode/auto", "code": 5, "status": "auto"}
         UNKNOWN = {"code": -1}
 
-    def __init__(self, network_facade: NetWorkFacade) -> None:
+    def __init__(self, network_facade: NetWorkFunctions) -> None:
         super().__init__(network_facade)

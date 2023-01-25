@@ -7,7 +7,7 @@ _CMD_STATUS = "status"
 _CONNECTION_TIMEOUT = 20
 _LOGGER = logging.getLogger(__name__)
 
-class NetWorkFacade:
+class NetWorkFunctions:
     def __init__(self,
         http_session: ClientSession,
         host: str = None,

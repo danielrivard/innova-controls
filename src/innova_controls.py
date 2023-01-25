@@ -4,7 +4,7 @@ from aiohttp import ClientSession
 
 from innova_device import InnovaDevice
 from innova_factory import InnovaFactory
-from network_facade import NetWorkFacade
+from network_functions import NetWorkFunctions
 
 _LOGGER = logging.getLogger(__name__)
 
@@ -36,7 +36,7 @@ class Innova:
             "serial={serial}, uid={uid}"
         )
 
-        self._network_facade = NetWorkFacade(http_session, host, serial, uid)
+        self._network_facade = NetWorkFunctions(http_session, host, serial, uid)
         self._device_manager: InnovaDevice = None
 
     async def async_update(self) -> bool:

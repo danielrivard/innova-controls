@@ -1,7 +1,7 @@
 from abc import ABC
 from enum import Enum
 import logging
-from network_facade import NetWorkFacade
+from network_functions import NetWorkFunctions
 
 _CMD_POWER_ON = "power/on"
 _CMD_POWER_OFF = "power/off"
@@ -30,7 +30,7 @@ class InnovaDevice(ABC):
         pass
 
 
-    def __init__(self, network_facade: NetWorkFacade) -> None:
+    def __init__(self, network_facade: NetWorkFunctions) -> None:
         super().__init__()
         self._network_facade = network_facade
         self._data = {}
