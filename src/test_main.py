@@ -10,10 +10,11 @@ async def main():
 
         result = await innova.async_update()
         print(f"Ambient: {innova.ambient_temp}")
-        await innova.set_temperature(19)
+        # await innova.set_temperature(19)
         print(f"Target: {innova.target_temperature}")
         print(f"Name: {innova.name}")
         print(f"Current Mode: {innova.mode}")
+        print(f"Powered on: {innova.power}")
 
 
 loop = asyncio.get_event_loop()

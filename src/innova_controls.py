@@ -2,7 +2,7 @@ import logging
 
 from aiohttp import ClientSession
 
-from device_manager import DeviceManager
+from innova_device import InnovaDevice
 from innova_factory import InnovaFactory
 from network_facade import NetWorkFacade
 
@@ -37,7 +37,7 @@ class Innova:
         )
 
         self._network_facade = NetWorkFacade(http_session, host, serial, uid)
-        self._device_manager: DeviceManager = None
+        self._device_manager: InnovaDevice = None
 
     async def async_update(self) -> bool:
         data: dict = await self._network_facade.get_status()
@@ -83,10 +83,10 @@ class Innova:
         return False
 
     @property
-    def mode(self) -> DeviceManager.Mode:
+    def mode(self) -> InnovaDevice.Mode:
         if self._device_manager:
             return self._device_manager.mode
-        return DeviceManager.Mode.UNKNOWN
+        return InnovaDevice.Mode.UNKNOWN
 
     @property
     def rotation(self) -> bool:
@@ -176,7 +176,7 @@ class Innova:
             return await self._device_manager.set_fan_speed(speed)
         return False
 
-    async def set_mode(self, mode: DeviceManager.Mode) -> bool:
+    async def set_mode(self, mode: InnovaDevice.Mode) -> bool:
         if self._device_manager:
             return await self._device_manager.set_mode(mode)
         return False

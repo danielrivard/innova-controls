@@ -1,7 +1,7 @@
 from enum import Enum
 
 from airleaf import AirLeaf
-from device_manager import DeviceManager
+from innova_device import InnovaDevice
 from network_facade import NetWorkFacade
 from twopointzero import TwoPointZero
 
@@ -12,7 +12,7 @@ class DeviceType(Enum):
 
 class InnovaFactory:
     @staticmethod
-    def get_device(device_type: str, network_facade: NetWorkFacade) -> DeviceManager:
+    def get_device(device_type: str, network_facade: NetWorkFacade) -> InnovaDevice:
         if device_type == DeviceType.TWOPOINTZERO.value:
             return TwoPointZero(network_facade)
         elif device_type == DeviceType.AIRLEAF.value:
