@@ -1,2 +1,2 @@
-retry2==0.9.3
-aiohttp==3.8.1
+retry2==0.9.5
+aiohttp==3.8.3
