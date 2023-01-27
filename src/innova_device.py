@@ -1,34 +1,19 @@
-from abc import ABC
-from enum import Enum
 import logging
+from abc import ABC, abstractmethod
+from enum import Enum
+
+from constants import CMD_POWER_OFF, CMD_POWER_ON, MAX_TEMP, MIN_TEMP
 from network_functions import NetWorkFunctions
-
-_CMD_POWER_ON = "power/on"
-_CMD_POWER_OFF = "power/off"
-
-_CMD_SET_TEMP = "set/setpoint"
-
-_CMD_ROTATION = "set/feature/rotation"
-_ROTATION_ON = 0
-_ROTATION_OFF = 7
-
-_CMD_FAN_SPEED = "set/fan"
-
-_CMD_NIGHT_MODE = "set/feature/night"
-_NIGHT_MODE_ON = 1
-_NIGHT_MODE_OFF = 0
-
-_MIN_TEMP = 16
-_MAX_TEMP = 31
 
 _LOGGER = logging.getLogger(__name__)
 
 
 class InnovaDevice(ABC):
-
     class Mode(Enum):
         pass
 
+    class UnknownMode(Mode):
+        UNKNOWN = {"code": -1}
 
     def __init__(self, network_facade: NetWorkFunctions) -> None:
         super().__init__()
@@ -38,32 +23,70 @@ class InnovaDevice(ABC):
 
     def set_data(self, data: dict) -> None:
         self._data = data
-        # We don't need the password, so obfuscate it to avoid exposing it in logs
-        self._data["RESULT"]["pwd"] = "__OBFUSCATED__"
-        _LOGGER.debug(f"Received: {self._data}")
-        self._status = self._data["RESULT"]
+        if self._data["success"] and "RESULT" in self._data:
+            # We don't need the password, so obfuscate it to avoid exposing it in logs
+            self._data["RESULT"]["pwd"] = "__OBFUSCATED__"
+            _LOGGER.debug(f"Received: {self._data}")
+            self._status = self._data["RESULT"]
+        else:
+            _LOGGER.error("Error contacting the unit with response")
 
     @property
-    def ambient_temp(self) -> int:
-        if "t" in self._status:
-            return self._status["t"]
-        else:
-            return 0
+    @abstractmethod
+    def ambient_temp(self) -> float:
+        pass
 
     @property
-    def target_temperature(self) -> int:
-        if "sp" in self._status:
-            return self._status["sp"]
-        else:
-            return 0
+    @abstractmethod
+    def target_temperature(self) -> float:
+        pass
+
+    @property
+    @abstractmethod
+    def fan_speed(self) -> int:
+        pass
+
+    @property
+    @abstractmethod
+    def rotation(self) -> bool:
+        pass
+
+    @property
+    @abstractmethod
+    def night_mode(self) -> bool:
+        pass
+
+    @abstractmethod
+    async def set_temperature(self, temperature: int) -> bool:
+        pass
+
+    @abstractmethod
+    async def set_fan_speed(self, speed: int) -> bool:
+        pass
+
+    @abstractmethod
+    async def rotation_on(self) -> bool:
+        pass
+
+    @abstractmethod
+    async def rotation_off(self) -> bool:
+        pass
+
+    @abstractmethod
+    async def night_mode_on(self) -> bool:
+        pass
+
+    @abstractmethod
+    async def night_mode_off(self) -> bool:
+        pass
 
     @property
     def min_temperature(self) -> int:
-        return _MIN_TEMP
+        return MIN_TEMP
 
     @property
     def max_temperature(self) -> int:
-        return _MAX_TEMP
+        return MAX_TEMP
 
     @property
     def power(self) -> bool:
@@ -77,26 +100,25 @@ class InnovaDevice(ABC):
             for mode in self.Mode:
                 if self._status["wm"] == mode.value["code"]:
                     return mode
-        return self.Mode.UNKNOWN
+        return self.UnknownMode.UNKNOWN
 
-    @property
-    def rotation(self) -> bool:
-        if "fr" in self._status:
-            if self._status["fr"] == _ROTATION_ON:
-                return True
+    async def power_on(self) -> bool:
+        if await self._network_facade._send_command(CMD_POWER_ON):
+            self._status["ps"] = 1
+            return True
         return False
 
-    @property
-    def fan_speed(self) -> int:
-        if "fs" in self._status:
-            return self._status["fs"]
-        return 0
+    async def power_off(self) -> bool:
+        if await self._network_facade._send_command(CMD_POWER_OFF):
+            self._status["ps"] = 0
+            return True
+        return False
 
-    @property
-    def night_mode(self) -> bool:
-        if "nm" in self._status:
-            if self._status["nm"] == _NIGHT_MODE_ON:
-                return True
+    async def set_mode(self, mode: Mode) -> bool:
+        if await self._network_facade._send_command(mode.value["cmd"]):
+            self._status["ps"] = 1
+            self._status["wm"] = mode.value["code"]
+            return True
         return False
 
     @property
@@ -129,59 +151,18 @@ class InnovaDevice(ABC):
             return self._data["net"]["ip"]
         return None
 
-    async def power_on(self) -> bool:
-        if await self._network_facade._send_command(_CMD_POWER_ON):
-            self._status["ps"] = 1
-            return True
+    @property
+    def supports_target_temp(self) -> bool:
+        return True
+
+    @property
+    def supports_swing(self) -> bool:
         return False
 
-    async def power_off(self) -> bool:
-        if await self._network_facade._send_command(_CMD_POWER_OFF):
-            self._status["ps"] = 0
-            return True
-        return False
+    @property
+    def supports_fan(self) -> bool:
+        return True
 
-    async def rotation_on(self) -> bool:
-        if await self._network_facade._send_command(_CMD_ROTATION, {"value": _ROTATION_ON}):
-            self._status["fr"] = _ROTATION_ON
-            return True
-        return False
-
-    async def rotation_off(self) -> bool:
-        if await self._network_facade._send_command(_CMD_ROTATION, {"value": _ROTATION_OFF}):
-            self._status["fr"] = _ROTATION_OFF
-            return True
-        return False
-
-    async def night_mode_on(self) -> bool:
-        if await self._network_facade._send_command(_CMD_NIGHT_MODE, {"value": _NIGHT_MODE_ON}):
-            self._status["nm"] = _NIGHT_MODE_ON
-            return True
-        return False
-
-    async def night_mode_off(self) -> bool:
-        if await self._network_facade._send_command(_CMD_NIGHT_MODE, {"value": _NIGHT_MODE_OFF}):
-            self._status["nm"] = _NIGHT_MODE_OFF
-            return True
-        return False
-
-    async def set_temperature(self, temperature: int) -> bool:
-        data = {"p_temp": temperature}
-        if await self._network_facade._send_command(_CMD_SET_TEMP, data):
-            self._status["sp"] = temperature
-            return True
-        return False
-
-    async def set_fan_speed(self, speed: int) -> bool:
-        data = {"value": speed}
-        if await self._network_facade._send_command(_CMD_FAN_SPEED, data):
-            self._status["fs"] = speed
-            return True
-        return False
-
-    async def set_mode(self, mode: Mode) -> bool:
-        if await self._network_facade._send_command(mode.value["cmd"]):
-            self._status["ps"] = 1
-            self._status["wm"] = mode.value["code"]
-            return True
-        return False
+    @property
+    def supports_preset(self) -> bool:
+        return True

@@ -37,15 +37,15 @@ class Innova:
         )
 
         self._network_facade = NetWorkFunctions(http_session, host, serial, uid)
-        self._device_manager: InnovaDevice = None
+        self._innova_device: InnovaDevice = None
 
     async def async_update(self) -> bool:
         data: dict = await self._network_facade.get_status()
 
         if data:
-            if self._device_manager is None:
-                self._device_manager = InnovaFactory.get_device(data["deviceType"], self._network_facade)
-            self._device_manager.set_data(data) 
+            if self._innova_device is None:
+                self._innova_device = InnovaFactory.get_device(data["deviceType"], self._network_facade)
+            self._innova_device.set_data(data) 
             _LOGGER.debug(f"Received: {data}")
             return True
         else:
@@ -53,130 +53,146 @@ class Innova:
             return False
 
     @property
-    def ambient_temp(self) -> int:
-        if self._device_manager:
-            return self._device_manager.ambient_temp
+    def ambient_temp(self) -> float:
+        if self._innova_device:
+            return self._innova_device.ambient_temp
         return 0
 
     @property
-    def target_temperature(self) -> int:
-        if self._device_manager:
-            return self._device_manager.target_temperature
+    def target_temperature(self) -> float:
+        if self._innova_device:
+            return self._innova_device.target_temperature
         return 0
 
     @property
-    def min_temperature(self) -> int:
-        if self._device_manager:
-            return self._device_manager.min_temperature
+    def min_temperature(self) -> float:
+        if self._innova_device:
+            return self._innova_device.min_temperature
         return 0
 
     @property
-    def max_temperature(self) -> int:
-        if self._device_manager:
-            return self._device_manager.max_temperature
+    def max_temperature(self) -> float:
+        if self._innova_device:
+            return self._innova_device.max_temperature
         return 0
 
     @property
     def power(self) -> bool:
-        if self._device_manager:
-            return self._device_manager.power
+        if self._innova_device:
+            return self._innova_device.power
         return False
 
     @property
     def mode(self) -> InnovaDevice.Mode:
-        if self._device_manager:
-            return self._device_manager.mode
-        return InnovaDevice.Mode.UNKNOWN
+        if self._innova_device:
+            return self._innova_device.mode
+        return InnovaDevice.UnknownMode.UNKNOWN
 
     @property
     def rotation(self) -> bool:
-        if self._device_manager:
-            return self._device_manager.rotation
+        if self._innova_device:
+            return self._innova_device.rotation
         return False
 
     @property
     def fan_speed(self) -> int:
-        if self._device_manager:
-            return self._device_manager.fan_speed
+        if self._innova_device:
+            return self._innova_device.fan_speed
         return 0
 
     @property
     def night_mode(self) -> bool:
-        if self._device_manager:
-            return self._device_manager.night_mode
+        if self._innova_device:
+            return self._innova_device.night_mode
         return False
 
     @property
     def name(self) -> str:
-        if self._device_manager:
-            return self._device_manager.name
+        if self._innova_device:
+            return self._innova_device.name
         return None
 
     @property
     def serial(self) -> str:
-        if self._device_manager:
-            return self._device_manager.serial
+        if self._innova_device:
+            return self._innova_device.serial
         return None
 
     @property
     def uid(self) -> str:
-        if self._device_manager:
-            return self._device_manager.uid
+        if self._innova_device:
+            return self._innova_device.uid
         return None
 
     @property
     def software_version(self) -> str:
-        if self._device_manager:
-            return self._device_manager.software_version
+        if self._innova_device:
+            return self._innova_device.software_version
         return None
 
     @property
     def ip_address(self) -> str:
-        if self._device_manager:
-            return self._device_manager.ip_address
+        if self._innova_device:
+            return self._innova_device.ip_address
         return None
 
     async def power_on(self) -> bool:
-        if self._device_manager:
-            return await self._device_manager.power_on()
+        if self._innova_device:
+            return await self._innova_device.power_on()
         return False
 
     async def power_off(self) -> bool:
-        if self._device_manager:
-            return await self._device_manager.power_off()
+        if self._innova_device:
+            return await self._innova_device.power_off()
         return False
 
     async def rotation_on(self) -> bool:
-        if self._device_manager:
-            return await self._device_manager.rotation_on()
+        if self._innova_device:
+            return await self._innova_device.rotation_on()
         return False
 
     async def rotation_off(self) -> bool:
-        if self._device_manager:
-            return await self._device_manager.rotation_off()
+        if self._innova_device:
+            return await self._innova_device.rotation_off()
         return False
 
     async def night_mode_on(self) -> bool:
-        if self._device_manager:
-            return await self._device_manager.night_mode_on()
+        if self._innova_device:
+            return await self._innova_device.night_mode_on()
         return False
 
     async def night_mode_off(self) -> bool:
-        if self._device_manager:
-            return await self._device_manager.night_mode_off()
+        if self._innova_device:
+            return await self._innova_device.night_mode_off()
         return False
 
-    async def set_temperature(self, temperature: int) -> bool:
-        if self._device_manager:
-            return await self._device_manager.set_temperature(temperature)
+    async def set_temperature(self, temperature: float) -> bool:
+        if self._innova_device:
+            return await self._innova_device.set_temperature(temperature)
         return False
 
     async def set_fan_speed(self, speed: int) -> bool:
-        if self._device_manager:
-            return await self._device_manager.set_fan_speed(speed)
+        if self._innova_device:
+            return await self._innova_device.set_fan_speed(speed)
         return False
 
     async def set_mode(self, mode: InnovaDevice.Mode) -> bool:
-        if self._device_manager:
-            return await self._device_manager.set_mode(mode)
+        if self._innova_device:
+            return await self._innova_device.set_mode(mode)
         return False
+
+    @property
+    def supports_target_temp(self) -> bool:
+        return self._innova_device.supports_target_temp
+
+    @property
+    def supports_swing(self) -> bool:
+        return self._innova_device.supports_swing
+
+    @property
+    def supports_fan(self) -> bool:
+        return self._innova_device.supports_fan
+
+    @property
+    def supports_preset(self) -> bool:
+        return self._innova_device.supports_preset
