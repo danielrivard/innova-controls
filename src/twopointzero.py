@@ -26,6 +26,10 @@ class TwoPointZero(InnovaDevice):
         super().__init__(network_facade)
 
     @property
+    def temperature_step(self) -> float:
+        return 1.0
+
+    @property
     def ambient_temp(self) -> float:
         if "t" in self._status:
             return self._status["t"]

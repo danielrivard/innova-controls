@@ -21,8 +21,12 @@ class AirLeaf(InnovaDevice):
         super().__init__(network_facade)
 
     @property
+    def temperature_step(self) -> float:
+        return 0.5
+
+    @property
     def ambient_temp(self) -> float:
-        if "t" in self._status:
+        if "ta" in self._status:
             return self._status["ta"] / 10
         else:
             return 0

@@ -25,7 +25,8 @@ class Innova:
             The MAC address of the Innova unit.
     """
 
-    def __init__(self,
+    def __init__(
+        self,
         http_session: ClientSession,
         host: str = None,
         serial: str = None,
@@ -44,8 +45,10 @@ class Innova:
 
         if data:
             if self._innova_device is None:
-                self._innova_device = InnovaFactory.get_device(data["deviceType"], self._network_facade)
-            self._innova_device.set_data(data) 
+                self._innova_device = InnovaFactory.get_device(
+                    data["deviceType"], self._network_facade
+                )
+            self._innova_device.set_data(data)
             _LOGGER.debug(f"Received: {data}")
             return True
         else:
@@ -63,6 +66,12 @@ class Innova:
         if self._innova_device:
             return self._innova_device.target_temperature
         return 0
+
+    @property
+    def temperature_step(self) -> float:
+        if self._innova_device:
+            return self._innova_device.temperature_step
+        return 1.0
 
     @property
     def min_temperature(self) -> float:

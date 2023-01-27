@@ -56,6 +56,11 @@ class InnovaDevice(ABC):
     def night_mode(self) -> bool:
         pass
 
+    @property
+    @abstractmethod
+    def temperature_step(self) -> float:
+        pass
+
     @abstractmethod
     async def set_temperature(self, temperature: int) -> bool:
         pass
