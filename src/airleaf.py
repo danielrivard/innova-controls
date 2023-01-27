@@ -1,4 +1,6 @@
-from constants import CMD_FAN_SPEED, CMD_SET_TEMP
+from enum import Enum
+
+from constants import CMD_SET_TEMP
 from innova_device import InnovaDevice
 from network_functions import NetWorkFunctions
 
@@ -8,6 +10,12 @@ class AirLeaf(InnovaDevice):
         AUTO = {"cmd": "set/mode/auto", "code": 0}
         HEATING = {"cmd": "set/mode/heating", "code": 3}
         COOLING = {"cmd": "set/mode/cooling", "code": 5}
+
+    class Function(Enum):
+        AUTO = {"cmd": "set/function/auto", "code": 1}
+        NIGHT = {"cmd": "set/function/night", "code": 2}
+        MIN = {"cmd": "set/function/min", "code": 3}
+        MAX = {"cmd": "set/function/max", "code": 4}
 
     def __init__(self, network_facade: NetWorkFunctions) -> None:
         super().__init__(network_facade)
@@ -46,7 +54,7 @@ class AirLeaf(InnovaDevice):
     @property
     def night_mode(self) -> bool:
         if "fn" in self._status:
-            if self._status["fn"] == 2:
+            if self._status["fn"] == self.Function.NIGHT.value["code"]:
                 return True
         return False
 
@@ -58,8 +66,12 @@ class AirLeaf(InnovaDevice):
         return False
 
     async def set_fan_speed(self, speed: int) -> bool:
-        data = {"value": speed}
-        if await self._network_facade._send_command(CMD_FAN_SPEED, data):
+        command: str = None
+        for function in self.Function:
+            if speed == function.value["code"]:
+                command = function.value["cmd"]
+
+        if command and await self._network_facade._send_command(command):
             self._status["fn"] = speed
             return True
         return False
@@ -71,13 +83,13 @@ class AirLeaf(InnovaDevice):
         return False
 
     async def night_mode_on(self) -> bool:
-        if await self._network_facade._send_command(CMD_FAN_SPEED, {"value": 2}):
-            self._status["fn"] = 2
+        if await self._network_facade._send_command(self.Function.NIGHT.value["cmd"]):
+            self._status["fn"] = self.Function.NIGHT.value["code"]
             return True
         return False
 
     async def night_mode_off(self) -> bool:
-        if await self._network_facade._send_command(CMD_FAN_SPEED, {"value": 0}):
-            self._status["fn"] = 0
+        if await self._network_facade._send_command(self.Function.AUTO.value["cmd"]):
+            self._status["fn"] = self.Function.AUTO.value["code"]
             return True
         return False
