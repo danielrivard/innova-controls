@@ -1,6 +1,6 @@
 from enum import Enum
 
-from constants import (
+from innova_controls.constants import (
     CMD_FAN_SPEED,
     CMD_NIGHT_MODE,
     CMD_ROTATION,
@@ -10,8 +10,8 @@ from constants import (
     ROTATION_OFF,
     ROTATION_ON,
 )
-from innova_device import InnovaDevice
-from network_functions import NetWorkFunctions
+from innova_controls.innova_device import InnovaDevice
+from innova_controls.network_functions import NetWorkFunctions
 
 
 class TwoPointZero(InnovaDevice):

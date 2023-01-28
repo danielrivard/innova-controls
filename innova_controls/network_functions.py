@@ -1,19 +1,21 @@
 import logging
+
 from aiohttp import ClientConnectionError, ClientSession, ServerTimeoutError
 from retry import retry
 
+from innova_controls.constants import CMD_STATUS, CONNECTION_TIMEOUT
 
-_CMD_STATUS = "status"
-_CONNECTION_TIMEOUT = 20
 _LOGGER = logging.getLogger(__name__)
 
+
 class NetWorkFunctions:
-    def __init__(self,
+    def __init__(
+        self,
         http_session: ClientSession,
         host: str = None,
         serial: str = None,
-        uid: str = None
-        ) -> None:
+        uid: str = None,
+    ) -> None:
 
         self._http_session = http_session
 
@@ -33,7 +35,7 @@ class NetWorkFunctions:
         cmd_url = f"{self._api_url}/{command}"
         try:
             r = await self._http_session.post(
-                cmd_url, data=data, headers=self._headers, timeout=_CONNECTION_TIMEOUT
+                cmd_url, data=data, headers=self._headers, timeout=CONNECTION_TIMEOUT
             )
 
             if r.status == 200:
@@ -51,10 +53,10 @@ class NetWorkFunctions:
 
     @retry(exceptions=Exception, tries=2, delay=2, logger=_LOGGER, log_traceback=True)
     async def get_status(self) -> dict:
-        status_url = f"{self._api_url}/{_CMD_STATUS}"
+        status_url = f"{self._api_url}/{CMD_STATUS}"
         try:
             r = await self._http_session.get(
-                status_url, headers=self._headers, timeout=_CONNECTION_TIMEOUT
+                status_url, headers=self._headers, timeout=CONNECTION_TIMEOUT
             )
             data: dict = await r.json(content_type=r.content_type)
             if data and data["success"] and "RESULT" in data:

@@ -1,8 +1,8 @@
 from enum import Enum
 
-from constants import CMD_SET_TEMP
-from innova_device import InnovaDevice
-from network_functions import NetWorkFunctions
+from innova_controls.constants import CMD_SET_TEMP
+from innova_controls.innova_device import InnovaDevice
+from innova_controls.network_functions import NetWorkFunctions
 
 
 class AirLeaf(InnovaDevice):

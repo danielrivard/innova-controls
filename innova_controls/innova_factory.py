@@ -1,14 +1,15 @@
 from enum import Enum
 
-from airleaf import AirLeaf
-from innova_device import InnovaDevice
-from network_functions import NetWorkFunctions
-from twopointzero import TwoPointZero
+from innova_controls.airleaf import AirLeaf
+from innova_controls.innova_device import InnovaDevice
+from innova_controls.network_functions import NetWorkFunctions
+from innova_controls.twopointzero import TwoPointZero
 
 
 class DeviceType(Enum):
     TWOPOINTZERO = "001"
     AIRLEAF = "002"
+
 
 class InnovaFactory:
     @staticmethod

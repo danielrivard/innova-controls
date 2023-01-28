@@ -2,8 +2,8 @@ import logging
 from abc import ABC, abstractmethod
 from enum import Enum
 
-from constants import CMD_POWER_OFF, CMD_POWER_ON, MAX_TEMP, MIN_TEMP
-from network_functions import NetWorkFunctions
+from innova_controls.constants import CMD_POWER_OFF, CMD_POWER_ON, MAX_TEMP, MIN_TEMP
+from innova_controls.network_functions import NetWorkFunctions
 
 _LOGGER = logging.getLogger(__name__)
 

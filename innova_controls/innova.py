@@ -2,9 +2,9 @@ import logging
 
 from aiohttp import ClientSession
 
-from innova_device import InnovaDevice
-from innova_factory import InnovaFactory
-from network_functions import NetWorkFunctions
+from innova_controls.innova_device import InnovaDevice
+from innova_controls.innova_factory import InnovaFactory
+from innova_controls.network_functions import NetWorkFunctions
 
 _LOGGER = logging.getLogger(__name__)
 
