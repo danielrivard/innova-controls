@@ -192,10 +192,20 @@ class Innova:
             return await self._innova_device.set_fan_speed(speed)
         return False
 
-    async def set_mode(self, mode: Mode) -> bool:
-        # if self._innova_device:
-        #     return await self._innova_device.set_mode(mode)
-        return False
+    async def set_heating(self) -> bool:
+        return await self._innova_device.set_heating()
+
+    async def set_cooling(self) -> bool:
+        return await self._innova_device.set_cooling()
+
+    async def set_dehumidifying(self) -> bool:
+        return await self._innova_device.set_dehumidifying()
+
+    async def set_fan_only(self) -> bool:
+        return await self._innova_device.set_fan_only()
+
+    async def set_auto(self) -> bool:
+        return await self._innova_device.set_auto()
 
     @property
     def supports_target_temp(self) -> bool:

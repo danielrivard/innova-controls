@@ -104,3 +104,18 @@ class AirLeaf(InnovaDevice):
             self._status["fn"] = self.Function.AUTO.value["code"]
             return True
         return False
+
+    async def set_heating(self) -> bool:
+        return await super()._set_mode(self.Modes.HEATING)
+
+    async def set_cooling(self) -> bool:
+        return await super()._set_mode(self.Modes.COOLING)
+
+    async def set_auto(self) -> bool:
+        return await super()._set_mode(self.Modes.AUTO)
+
+    async def set_dehumidifying(self) -> bool:
+        pass
+
+    async def set_fan_only(self) -> bool:
+        pass

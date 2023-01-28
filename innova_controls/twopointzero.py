@@ -119,3 +119,18 @@ class TwoPointZero(InnovaDevice):
             self._status["nm"] = NIGHT_MODE_OFF
             return True
         return False
+
+    async def set_heating(self) -> bool:
+        return await super()._set_mode(self.Modes.HEATING)
+
+    async def set_cooling(self) -> bool:
+        return await super()._set_mode(self.Modes.COOLING)
+
+    async def set_dehumidifying(self) -> bool:
+        return await super()._set_mode(self.Modes.DEHUMIDIFICATION)
+
+    async def set_fan_only(self) -> bool:
+        return await super()._set_mode(self.Modes.FAN_ONLY)
+
+    async def set_auto(self) -> bool:
+        return await super()._set_mode(self.Modes.AUTO)
