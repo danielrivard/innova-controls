@@ -9,6 +9,7 @@ from innova_controls.constants import (
     MIN_TEMP,
     UNKNOWN_MODE,
 )
+from innova_controls.fan_speed import FanSpeed
 from innova_controls.mode import Mode
 from innova_controls.network_functions import NetWorkFunctions
 
@@ -58,7 +59,12 @@ class InnovaDevice(ABC):
 
     @property
     @abstractmethod
-    def fan_speed(self) -> int:
+    def fan_speed(self) -> FanSpeed:
+        pass
+
+    @property
+    @abstractmethod
+    def supported_fan_speeds(self) -> List[FanSpeed]:
         pass
 
     @property
@@ -81,7 +87,7 @@ class InnovaDevice(ABC):
         pass
 
     @abstractmethod
-    async def set_fan_speed(self, speed: int) -> bool:
+    async def set_fan_speed(self, speed: FanSpeed) -> bool:
         pass
 
     @abstractmethod

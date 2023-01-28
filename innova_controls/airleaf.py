@@ -1,6 +1,8 @@
 from enum import Enum
+from typing import List
 
 from innova_controls.constants import CMD_SET_TEMP
+from innova_controls.fan_speed import FanSpeed
 from innova_controls.innova_device import InnovaDevice
 from innova_controls.mode import Mode
 from innova_controls.network_functions import NetWorkFunctions
@@ -19,10 +21,12 @@ class AirLeaf(InnovaDevice):
         }
 
     class Function(Enum):
-        AUTO = {"cmd": "set/function/auto", "code": 1}
-        NIGHT = {"cmd": "set/function/night", "code": 2}
-        MIN = {"cmd": "set/function/min", "code": 3}
-        MAX = {"cmd": "set/function/max", "code": 4}
+        AUTO = {"cmd": "set/function/auto", "code": 1, "fan": FanSpeed.AUTO}
+        NIGHT = {"cmd": "set/function/night", "code": 2, "fan": None}
+        MIN = {"cmd": "set/function/min", "code": 3, "fan": FanSpeed.LOW}
+        MAX = {"cmd": "set/function/max", "code": 4, "fan": FanSpeed.HIGH}
+
+        codes = {1: AUTO, 2: NIGHT, 3: MIN, 4: MAX, "fan": None}
 
     def __init__(self, network_facade: NetWorkFunctions) -> None:
         super().__init__(network_facade)
@@ -53,10 +57,23 @@ class AirLeaf(InnovaDevice):
             return 0
 
     @property
-    def fan_speed(self) -> int:
+    def fan_speed(self) -> FanSpeed:
         if "fn" in self._status:
-            return self._status["fn"]
-        return 0
+            fn = self.Function.codes.value[self._status["fn"]]
+            # Night is not really a fan speed, and is handled by preset
+            # so, let fan be labeled as AUTO in this case.
+            if fn == self.Function.NIGHT:
+                fn = FanSpeed.AUTO
+            return fn["fan"]
+        return FanSpeed.AUTO
+
+    @property
+    def supported_fan_speeds(self) -> List[FanSpeed]:
+        speeds: List[FanSpeed] = []
+        for function in self.Function:
+            if "fan" in function.value and function.value["fan"] is not None:
+                speeds.append(function.value["fan"])
+        return speeds
 
     @property
     def rotation(self) -> bool:
@@ -76,14 +93,17 @@ class AirLeaf(InnovaDevice):
             return True
         return False
 
-    async def set_fan_speed(self, speed: int) -> bool:
+    async def set_fan_speed(self, speed: FanSpeed) -> bool:
         command: str = None
+        code: int = None
         for function in self.Function:
-            if speed == function.value["code"]:
+            if speed == function.value["fan"]:
                 command = function.value["cmd"]
+                code = function.value["code"]
+                break
 
         if command and await self._network_facade._send_command(command):
-            self._status["fn"] = speed
+            self._status["fn"] = code
             return True
         return False
 

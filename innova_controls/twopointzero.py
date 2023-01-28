@@ -1,3 +1,6 @@
+from enum import Enum
+from typing import List
+
 from innova_controls.constants import (
     CMD_FAN_SPEED,
     CMD_NIGHT_MODE,
@@ -8,6 +11,7 @@ from innova_controls.constants import (
     ROTATION_OFF,
     ROTATION_ON,
 )
+from innova_controls.fan_speed import FanSpeed
 from innova_controls.innova_device import InnovaDevice
 from innova_controls.mode import Mode
 from innova_controls.network_functions import NetWorkFunctions
@@ -28,6 +32,14 @@ class TwoPointZero(InnovaDevice):
             4: FAN_ONLY,
             5: AUTO,
         }
+
+    fan_speeds = {
+        0: FanSpeed.AUTO,
+        1: FanSpeed.LOW,
+        2: FanSpeed.MEDIUM,
+        3: FanSpeed.HIGH,
+    }
+    fan_speeds_reverse: dict = {v: k for k, v in fan_speeds.items()}
 
     def __init__(self, network_facade: NetWorkFunctions) -> None:
         super().__init__(network_facade)
@@ -51,10 +63,14 @@ class TwoPointZero(InnovaDevice):
             return 0
 
     @property
-    def fan_speed(self) -> int:
+    def fan_speed(self) -> FanSpeed:
         if "fs" in self._status:
-            return self._status["fs"]
-        return 0
+            return self.fan_speeds[self._status["fs"]]
+        return FanSpeed.AUTO
+
+    @property
+    def supported_fan_speeds(self) -> List[FanSpeed]:
+        return list(self.fan_speeds.values())
 
     @property
     def rotation(self) -> bool:
@@ -77,10 +93,11 @@ class TwoPointZero(InnovaDevice):
             return True
         return False
 
-    async def set_fan_speed(self, speed: int) -> bool:
-        data = {"value": speed}
+    async def set_fan_speed(self, speed: FanSpeed) -> bool:
+        speed_code = self.fan_speeds_reverse[speed]
+        data = {"value": speed_code}
         if await self._network_facade._send_command(CMD_FAN_SPEED, data):
-            self._status["fs"] = speed
+            self._status["fs"] = speed_code
             return True
         return False
 
