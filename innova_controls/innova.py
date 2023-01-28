@@ -4,6 +4,7 @@ from typing import List
 from aiohttp import ClientSession
 
 from innova_controls.constants import UNKNOWN_MODE
+from innova_controls.fan_speed import FanSpeed
 from innova_controls.innova_device import InnovaDevice
 from innova_controls.innova_factory import InnovaFactory
 from innova_controls.mode import Mode
@@ -102,7 +103,9 @@ class Innova:
 
     @property
     def supported_modes(self) -> List[Mode]:
-        return self._innova_device.Modes.get_supported_modes()
+        if self._innova_device:
+            return list(self._innova_device.Modes.get_supported_modes())
+        return []
 
     @property
     def rotation(self) -> bool:
@@ -111,10 +114,16 @@ class Innova:
         return False
 
     @property
-    def fan_speed(self) -> int:
+    def fan_speed(self) -> FanSpeed:
         if self._innova_device:
             return self._innova_device.fan_speed
         return 0
+
+    @property
+    def supported_fan_speeds(self) -> List[FanSpeed]:
+        if self._innova_device:
+            return self._innova_device.supported_fan_speeds
+        return []
 
     @property
     def night_mode(self) -> bool:
@@ -187,7 +196,7 @@ class Innova:
             return await self._innova_device.set_temperature(temperature)
         return False
 
-    async def set_fan_speed(self, speed: int) -> bool:
+    async def set_fan_speed(self, speed: FanSpeed) -> bool:
         if self._innova_device:
             return await self._innova_device.set_fan_speed(speed)
         return False
