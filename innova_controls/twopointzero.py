@@ -1,5 +1,3 @@
-from enum import Enum
-
 from innova_controls.constants import (
     CMD_FAN_SPEED,
     CMD_NIGHT_MODE,
@@ -11,16 +9,25 @@ from innova_controls.constants import (
     ROTATION_ON,
 )
 from innova_controls.innova_device import InnovaDevice
+from innova_controls.mode import Mode
 from innova_controls.network_functions import NetWorkFunctions
 
 
 class TwoPointZero(InnovaDevice):
-    class Mode(InnovaDevice.Mode):
-        HEATING = {"cmd": "set/mode/heating", "code": 0}
-        COOLING = {"cmd": "set/mode/cooling", "code": 1}
-        DEHUMIDIFICATION = {"cmd": "set/mode/dehumidification", "code": 3}
-        FAN_ONLY = {"cmd": "set/mode/fanonly", "code": 4}
-        AUTO = {"cmd": "set/mode/auto", "code": 5}
+    class Modes(InnovaDevice.Modes):
+        HEATING = Mode("set/mode/heating", 0, heat=True)
+        COOLING = Mode("set/mode/cooling", 1, cool=True)
+        DEHUMIDIFICATION = Mode("set/mode/dehumidification", 3, dehumidify=True)
+        FAN_ONLY = Mode("set/mode/fanonly", 4, fan_only=True)
+        AUTO = Mode("set/mode/auto", 5, auto=True)
+
+        codes: dict = {
+            0: HEATING,
+            1: COOLING,
+            3: DEHUMIDIFICATION,
+            4: FAN_ONLY,
+            5: AUTO,
+        }
 
     def __init__(self, network_facade: NetWorkFunctions) -> None:
         super().__init__(network_facade)

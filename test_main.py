@@ -19,6 +19,8 @@ async def main():
         print(f"Fan Speed: {innova.fan_speed}")
         print(f"Rotation: {innova.rotation}")
         print(f"Night Mode: {innova.night_mode}")
+        for mode in innova.supported_modes:
+            print(mode)
 
 
 loop = asyncio.get_event_loop()
