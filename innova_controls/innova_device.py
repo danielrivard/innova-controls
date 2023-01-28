@@ -1,19 +1,34 @@
 import logging
 from abc import ABC, abstractmethod
-from enum import Enum
+from typing import List
 
-from innova_controls.constants import CMD_POWER_OFF, CMD_POWER_ON, MAX_TEMP, MIN_TEMP
+from innova_controls.constants import (
+    CMD_POWER_OFF,
+    CMD_POWER_ON,
+    MAX_TEMP,
+    MIN_TEMP,
+    UNKNOWN_MODE,
+)
+from innova_controls.mode import Mode
 from innova_controls.network_functions import NetWorkFunctions
 
 _LOGGER = logging.getLogger(__name__)
 
 
 class InnovaDevice(ABC):
-    class Mode(Enum):
-        pass
+    class Modes(ABC):
+        codes: dict = None
 
-    class UnknownMode(Mode):
-        UNKNOWN = {"code": -1}
+        @classmethod
+        def get_supported_modes(cls) -> List[Mode]:
+            return cls.codes.values()
+
+        @classmethod
+        def get_mode(cls, code: int) -> Mode:
+            if code in cls.codes:
+                return cls.codes[code]
+            else:
+                return UNKNOWN_MODE
 
     def __init__(self, network_facade: NetWorkFunctions) -> None:
         super().__init__()
@@ -85,6 +100,33 @@ class InnovaDevice(ABC):
     async def night_mode_off(self) -> bool:
         pass
 
+    @abstractmethod
+    async def set_heating(self) -> bool:
+        pass
+
+    @abstractmethod
+    async def set_cooling(self) -> bool:
+        pass
+
+    @abstractmethod
+    async def set_dehumidifying(self) -> bool:
+        pass
+
+    @abstractmethod
+    async def set_fan_only(self) -> bool:
+        pass
+
+    @abstractmethod
+    async def set_auto(self) -> bool:
+        pass
+
+    async def _set_mode(self, mode: Mode) -> bool:
+        if await self._network_facade._send_command(mode.command):
+            self._status["ps"] = 1
+            self._status["wm"] = mode.code
+            return True
+        return False
+
     @property
     def min_temperature(self) -> int:
         return MIN_TEMP
@@ -102,10 +144,9 @@ class InnovaDevice(ABC):
     @property
     def mode(self) -> Mode:
         if "wm" in self._status:
-            for mode in self.Mode:
-                if self._status["wm"] == mode.value["code"]:
-                    return mode
-        return self.UnknownMode.UNKNOWN
+            return self.Modes.get_mode(self._status["wm"])
+        else:
+            return UNKNOWN_MODE
 
     async def power_on(self) -> bool:
         if await self._network_facade._send_command(CMD_POWER_ON):
@@ -116,13 +157,6 @@ class InnovaDevice(ABC):
     async def power_off(self) -> bool:
         if await self._network_facade._send_command(CMD_POWER_OFF):
             self._status["ps"] = 0
-            return True
-        return False
-
-    async def set_mode(self, mode: Mode) -> bool:
-        if await self._network_facade._send_command(mode.value["cmd"]):
-            self._status["ps"] = 1
-            self._status["wm"] = mode.value["code"]
             return True
         return False
 

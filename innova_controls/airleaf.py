@@ -2,14 +2,21 @@ from enum import Enum
 
 from innova_controls.constants import CMD_SET_TEMP
 from innova_controls.innova_device import InnovaDevice
+from innova_controls.mode import Mode
 from innova_controls.network_functions import NetWorkFunctions
 
 
 class AirLeaf(InnovaDevice):
-    class Mode(InnovaDevice.Mode):
-        AUTO = {"cmd": "set/mode/auto", "code": 0}
-        HEATING = {"cmd": "set/mode/heating", "code": 3}
-        COOLING = {"cmd": "set/mode/cooling", "code": 5}
+    class Modes(InnovaDevice.Modes):
+        AUTO = Mode("set/mode/auto", 0, auto=True)
+        HEATING = Mode("set/mode/heating", 3, heat=True)
+        COOLING = Mode("set/mode/cooling", 5, cool=True)
+
+        codes: dict = {
+            0: AUTO,
+            3: HEATING,
+            5: COOLING,
+        }
 
     class Function(Enum):
         AUTO = {"cmd": "set/function/auto", "code": 1}
@@ -97,3 +104,18 @@ class AirLeaf(InnovaDevice):
             self._status["fn"] = self.Function.AUTO.value["code"]
             return True
         return False
+
+    async def set_heating(self) -> bool:
+        return await super()._set_mode(self.Modes.HEATING)
+
+    async def set_cooling(self) -> bool:
+        return await super()._set_mode(self.Modes.COOLING)
+
+    async def set_auto(self) -> bool:
+        return await super()._set_mode(self.Modes.AUTO)
+
+    async def set_dehumidifying(self) -> bool:
+        pass
+
+    async def set_fan_only(self) -> bool:
+        pass

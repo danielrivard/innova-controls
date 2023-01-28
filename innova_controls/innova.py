@@ -1,9 +1,12 @@
 import logging
+from typing import List
 
 from aiohttp import ClientSession
 
+from innova_controls.constants import UNKNOWN_MODE
 from innova_controls.innova_device import InnovaDevice
 from innova_controls.innova_factory import InnovaFactory
+from innova_controls.mode import Mode
 from innova_controls.network_functions import NetWorkFunctions
 
 _LOGGER = logging.getLogger(__name__)
@@ -92,10 +95,14 @@ class Innova:
         return False
 
     @property
-    def mode(self) -> InnovaDevice.Mode:
+    def mode(self) -> Mode:
         if self._innova_device:
             return self._innova_device.mode
-        return InnovaDevice.UnknownMode.UNKNOWN
+        return UNKNOWN_MODE
+
+    @property
+    def supported_modes(self) -> List[Mode]:
+        return self._innova_device.Modes.get_supported_modes()
 
     @property
     def rotation(self) -> bool:
@@ -185,10 +192,20 @@ class Innova:
             return await self._innova_device.set_fan_speed(speed)
         return False
 
-    async def set_mode(self, mode: InnovaDevice.Mode) -> bool:
-        if self._innova_device:
-            return await self._innova_device.set_mode(mode)
-        return False
+    async def set_heating(self) -> bool:
+        return await self._innova_device.set_heating()
+
+    async def set_cooling(self) -> bool:
+        return await self._innova_device.set_cooling()
+
+    async def set_dehumidifying(self) -> bool:
+        return await self._innova_device.set_dehumidifying()
+
+    async def set_fan_only(self) -> bool:
+        return await self._innova_device.set_fan_only()
+
+    async def set_auto(self) -> bool:
+        return await self._innova_device.set_auto()
 
     @property
     def supports_target_temp(self) -> bool:

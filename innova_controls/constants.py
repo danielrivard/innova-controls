@@ -1,3 +1,5 @@
+from innova_controls.mode import Mode
+
 CMD_POWER_ON = "power/on"
 CMD_POWER_OFF = "power/off"
 CMD_NIGHT_MODE = "set/feature/night"
@@ -16,3 +18,5 @@ MIN_TEMP = 16
 MAX_TEMP = 31
 
 CONNECTION_TIMEOUT = 20
+
+UNKNOWN_MODE = Mode("", -1)
