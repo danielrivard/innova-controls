@@ -125,7 +125,6 @@ JSON returned by status endpoint:
 |Fan Function|POST|/set/fan|value=[1-4]|1=auto,2=night,3=min,4=max|
 |Cooling|POST|/set/mode/cooling|||
 |Heating|POST|/set/mode/heating|||
-|Auto|POST|/set/mode/auto|||
 
 
 JSON returned by status endpoint:
@@ -156,7 +155,7 @@ JSON returned by status endpoint:
   },
   "RESULT": {
     "sp": 200,                        <--- Temperature Set point (x10)
-    "wm": 3,                          <--- Mode: 0=auto,  3=heating. 5=cooling
+    "wm": 3,                          <--- Mode: 3=heating. 5=cooling
     "fn": 1,                          <--- Fan Function: 1=auto, 2=night, 3=min, 4=max
     "kl": 0,
     "lastworkingModeSet": 0,
