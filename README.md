@@ -121,7 +121,7 @@ JSON returned by status endpoint:
 |Power OFF|POST|/power/off|||
 |Scheduling ON|POST|/set/calendar/on||Not implemented by this library|
 |Scheduling OFF (Manual)|POST|/set/calendar/off||Not implemented by this library|
-|Set point|POST|/set/setpoint|p_temp=240||
+|Set point|POST|/set/setpoint|temp=240||
 |Fan Function|POST|/set/fan|value=[1-4]|1=auto,2=night,3=min,4=max|
 |Cooling|POST|/set/mode/cooling|||
 |Heating|POST|/set/mode/heating|||
