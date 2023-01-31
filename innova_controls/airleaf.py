@@ -125,10 +125,14 @@ class AirLeaf(InnovaDevice):
         return False
 
     async def set_heating(self) -> bool:
-        return await super()._set_mode(self.Modes.HEATING)
+        if self.power or await self.power_on():
+            return await self._set_mode(self.Modes.HEATING)
+        return False
 
     async def set_cooling(self) -> bool:
-        return await super()._set_mode(self.Modes.COOLING)
+        if self.power or await self.power_on():
+            return await self._set_mode(self.Modes.COOLING)
+        return False
 
     async def set_auto(self) -> bool:
         pass

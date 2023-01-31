@@ -138,16 +138,16 @@ class TwoPointZero(InnovaDevice):
         return False
 
     async def set_heating(self) -> bool:
-        return await super()._set_mode(self.Modes.HEATING)
+        return await self._set_mode(self.Modes.HEATING)
 
     async def set_cooling(self) -> bool:
-        return await super()._set_mode(self.Modes.COOLING)
+        return await self._set_mode(self.Modes.COOLING)
 
     async def set_dehumidifying(self) -> bool:
-        return await super()._set_mode(self.Modes.DEHUMIDIFICATION)
+        return await self._set_mode(self.Modes.DEHUMIDIFICATION)
 
     async def set_fan_only(self) -> bool:
-        return await super()._set_mode(self.Modes.FAN_ONLY)
+        return await self._set_mode(self.Modes.FAN_ONLY)
 
     async def set_auto(self) -> bool:
-        return await super()._set_mode(self.Modes.AUTO)
+        return await self._set_mode(self.Modes.AUTO)
