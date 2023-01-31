@@ -10,12 +10,10 @@ from innova_controls.network_functions import NetWorkFunctions
 
 class AirLeaf(InnovaDevice):
     class Modes(InnovaDevice.Modes):
-        AUTO = Mode("set/mode/auto", 0, auto=True)
         HEATING = Mode("set/mode/heating", 3, heat=True)
         COOLING = Mode("set/mode/cooling", 5, cool=True)
 
         codes: dict = {
-            0: AUTO,
             3: HEATING,
             5: COOLING,
         }
@@ -133,7 +131,7 @@ class AirLeaf(InnovaDevice):
         return await super()._set_mode(self.Modes.COOLING)
 
     async def set_auto(self) -> bool:
-        return await super()._set_mode(self.Modes.AUTO)
+        pass
 
     async def set_dehumidifying(self) -> bool:
         pass
