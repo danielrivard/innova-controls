@@ -128,7 +128,7 @@ JSON returned by status endpoint:
 |Power OFF|POST|/power/off|||
 |Scheduling ON|POST|/set/calendar/on||Not implemented by this library|
 |Scheduling OFF (Manual)|POST|/set/calendar/off||Not implemented by this library|
-|Set point|POST|/set/setpoint|temp=240||
+|Set point|POST|/set/setpoint|temp=240|On AirLeaf, temperatures are multiplied by 10|
 |Fan Function Auto|POST|/set/function/auto|value=1||
 |Fan Function Night|POST|/set/function/night|value=1||
 |Fan Function Min|POST|/set/function/min|value=1||
