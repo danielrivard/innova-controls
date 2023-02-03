@@ -37,7 +37,7 @@ Ex: ```curl http://192.168.1.155/api/v/1/status```
 It is highly recommended to set the IP of your unit to a static DHCP address.
 
 #### 2.0 Commands and Statuses
-|Action|HTTP Verb|API Endpoint|Data Needed|Extra Info|
+|Action|HTTP Verb|API Endpoint|Data Needed (`Content-Type: application/x-www-form-urlencoded`)|Extra Info|
 |---|---|---|---|---|
 |Status|GET|/status||Returns json object|
 |Power ON|POST|/power/on|||
@@ -121,7 +121,7 @@ JSON returned by status endpoint:
 ```
 
 #### AirLeaf Commands and Statuses
-|Action|HTTP Verb|API Endpoint|Data Needed|Extra Info|
+|Action|HTTP Verb|API Endpoint|Data Needed (`Content-Type: application/json`)|Extra Info|
 |---|---|---|---|---|
 |Status|GET|/status||Returns json object|
 |Power ON|POST|/power/on|||
