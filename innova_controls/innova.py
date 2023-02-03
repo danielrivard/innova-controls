@@ -64,6 +64,12 @@ class Innova:
         if self._innova_device:
             return self._innova_device.ambient_temp
         return 0
+    
+    @property
+    def water_temp(self) -> float:
+        if self._innova_device:
+            return self._innova_device.water_temperature
+        return 0
 
     @property
     def target_temperature(self) -> float:
@@ -219,6 +225,10 @@ class Innova:
     @property
     def supports_target_temp(self) -> bool:
         return self._innova_device.supports_target_temp
+
+    @property
+    def supports_water_temp(self) -> bool:
+        return self._innova_device.supports_water_temp
 
     @property
     def supports_swing(self) -> bool:
