@@ -1,4 +1,4 @@
-from flask import Flask, jsonify
+from flask import Flask, jsonify, request
 
 app = Flask(__name__)
 
@@ -35,6 +35,10 @@ def night_mode():
 
 @app.route("/api/v/1/set/setpoint", methods=["POST"])
 def set_point():
+    if request.content_type == "application/x-www-form-urlencoded":
+        print(request.form.to_dict())
+    if request.content_type == "application/json":
+        print(request.json)
     return success_response()
 
 
