@@ -31,11 +31,15 @@ class NetWorkFunctions:
             self._headers = {"X-serial": serial, "X-UID": uid}
 
     @retry(exceptions=Exception, tries=2, delay=2, logger=_LOGGER, log_traceback=True)
-    async def send_command(self, command, data=None) -> bool:
+    async def send_command(self, command, data=None, json=None) -> bool:
         cmd_url = f"{self._api_url}/{command}"
         try:
             r = await self._http_session.post(
-                cmd_url, data=data, headers=self._headers, timeout=CONNECTION_TIMEOUT
+                cmd_url,
+                data=data,
+                json=json,
+                headers=self._headers,
+                timeout=CONNECTION_TIMEOUT,
             )
 
             if r.status == 200:
