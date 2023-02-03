@@ -35,6 +35,7 @@ def night_mode():
 
 @app.route("/api/v/1/set/setpoint", methods=["POST"])
 def set_point():
+    print(request.content_type)
     if request.content_type == "application/x-www-form-urlencoded":
         print(request.form.to_dict())
     if request.content_type == "application/json":
@@ -49,6 +50,8 @@ def rotation():
 
 @app.route("/api/v/1/set/fan", methods=["POST"])
 def fan_rotation():
+    print(request.content_type)
+    print(request.form.to_dict())
     return success_response()
 
 

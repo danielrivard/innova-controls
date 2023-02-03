@@ -1,4 +1,3 @@
-from enum import Enum
 from typing import List
 
 from innova_controls.constants import (
@@ -92,7 +91,7 @@ class TwoPointZero(InnovaDevice):
 
     async def set_temperature(self, temperature: float) -> bool:
         data = {"p_temp": temperature}
-        if await self._network_facade.send_command(CMD_SET_TEMP, data):
+        if await self._network_facade.send_command(CMD_SET_TEMP, data=data):
             self._status["sp"] = temperature
             return True
         return False
@@ -100,7 +99,7 @@ class TwoPointZero(InnovaDevice):
     async def set_fan_speed(self, speed: FanSpeed) -> bool:
         speed_code = self.fan_speeds_reverse[speed]
         data = {"value": speed_code}
-        if await self._network_facade.send_command(CMD_FAN_SPEED, data):
+        if await self._network_facade.send_command(CMD_FAN_SPEED, data=data):
             self._status["fs"] = speed_code
             return True
         return False
@@ -110,33 +109,29 @@ class TwoPointZero(InnovaDevice):
         return True
 
     async def rotation_on(self) -> bool:
-        if await self._network_facade.send_command(
-            CMD_ROTATION, {"value": ROTATION_ON}
-        ):
+        data = {"value": ROTATION_ON}
+        if await self._network_facade.send_command(CMD_ROTATION, data=data):
             self._status["fr"] = ROTATION_ON
             return True
         return False
 
     async def rotation_off(self) -> bool:
-        if await self._network_facade.send_command(
-            CMD_ROTATION, {"value": ROTATION_OFF}
-        ):
+        data = {"value": ROTATION_OFF}
+        if await self._network_facade.send_command(CMD_ROTATION, data=data):
             self._status["fr"] = ROTATION_OFF
             return True
         return False
 
     async def night_mode_on(self) -> bool:
-        if await self._network_facade.send_command(
-            CMD_NIGHT_MODE, {"value": NIGHT_MODE_ON}
-        ):
+        data = {"value": NIGHT_MODE_ON}
+        if await self._network_facade.send_command(CMD_NIGHT_MODE, data=data):
             self._status["nm"] = NIGHT_MODE_ON
             return True
         return False
 
     async def night_mode_off(self) -> bool:
-        if await self._network_facade.send_command(
-            CMD_NIGHT_MODE, {"value": NIGHT_MODE_OFF}
-        ):
+        data = {"value": NIGHT_MODE_OFF}
+        if await self._network_facade.send_command(CMD_NIGHT_MODE, data=data):
             self._status["nm"] = NIGHT_MODE_OFF
             return True
         return False

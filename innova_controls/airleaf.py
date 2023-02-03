@@ -91,7 +91,7 @@ class AirLeaf(InnovaDevice):
     async def set_temperature(self, temperature: float) -> bool:
         new_temp = temperature * 10
         data = {"temp": new_temp}
-        if await self._network_facade.send_command(CMD_SET_TEMP, data):
+        if await self._network_facade.send_command(CMD_SET_TEMP, json=data):
             self._status["sp"] = new_temp
             return True
         return False
