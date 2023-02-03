@@ -121,7 +121,7 @@ def status():
             "ncc": 0,
             "nm": 0,
             "ns": 0,
-            "ps": 0,
+            "ps": 1,
             "pwd": "",
             "sp": target_temp,
             "t": ambient_temp,

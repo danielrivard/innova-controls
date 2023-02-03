@@ -1,8 +1,8 @@
 import asyncio
 
 import aiohttp
-from innova_controls.fan_speed import FanSpeed
 
+from innova_controls.fan_speed import FanSpeed
 from innova_controls.innova import Innova
 
 

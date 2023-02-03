@@ -53,7 +53,7 @@ class AirLeaf(InnovaDevice):
             return self._status["tw"] / 10
         else:
             return 0
-    
+
     @property
     def supports_water_temp(self) -> bool:
         return True

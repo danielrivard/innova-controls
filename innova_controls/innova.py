@@ -64,7 +64,7 @@ class Innova:
         if self._innova_device:
             return self._innova_device.ambient_temp
         return 0
-    
+
     @property
     def water_temp(self) -> float:
         if self._innova_device:
