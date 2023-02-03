@@ -10,6 +10,9 @@ Also supports [AirLeaf](https://www.innovaenergie.com/en/products/fancoils/airle
 ``` pip install innova_controls```
 
 ## Innova class usage
+See [test_main.py](test_main.py) for some example usage. 
+
+This is far from perfect documentation, but it is a start.
 
 ## Communication protocol
 
@@ -19,7 +22,11 @@ All commands are sent to the unit itself through http at its network IP address:
 
 ### Cloud Mode
 
-Commands are sent to Innova's cloud services at **http://innovaenergie.cloud/api/v/1**. The serial number and the MAC Address of the unit are needed when using cloud mode.
+Commands are sent to Innova's cloud services at **https://innovaenergie.cloud/api/v/1** (or **https://fancoil.innovaenergie.cloud/api/v/1** for AirLeaf, but currently not working). The serial number and the MAC Address of the unit are needed when using cloud mode.
+
+The following custom http headers are added to requests to identify units
+  * "X-serial": UNIT_SERIAL_NUMBER
+  * "X-UID": UNIT_MAC_ADDRESS
 
 ### Protocol definition
 
@@ -84,7 +91,7 @@ JSON returned by status endpoint:
         "timerStatus": 0,
         "uptime": 159660,
         "uscm": 0,
-        "wm": 4                         <--- Mode: 0=heating, 1=cooling, 3=dehumidification, 4=fanonly. 5=auto
+        "wm": 4                         <--- Working Mode: 0=heating, 1=cooling, 3=dehumidification, 4=fanonly. 5=auto
     },
     "UID": "[MAC ADDRESS]",
     "deviceType": "001",
@@ -121,8 +128,11 @@ JSON returned by status endpoint:
 |Power OFF|POST|/power/off|||
 |Scheduling ON|POST|/set/calendar/on||Not implemented by this library|
 |Scheduling OFF (Manual)|POST|/set/calendar/off||Not implemented by this library|
-|Set point|POST|/set/setpoint|temp=240||
-|Fan Function|POST|/set/fan|value=[1-4]|1=auto,2=night,3=min,4=max|
+|Set point|POST|/set/setpoint|temp=240|On AirLeaf, temperatures are multiplied by 10|
+|Fan Function Auto|POST|/set/function/auto|value=1||
+|Fan Function Night|POST|/set/function/night|value=1||
+|Fan Function Min|POST|/set/function/min|value=1||
+|Fan Function Max|POST|/set/function/max|value=1||
 |Cooling|POST|/set/mode/cooling|||
 |Heating|POST|/set/mode/heating|||
 
@@ -155,7 +165,7 @@ JSON returned by status endpoint:
   },
   "RESULT": {
     "sp": 200,                        <--- Temperature Set point (x10)
-    "wm": 3,                          <--- Mode: 3=heating. 5=cooling
+    "wm": 3,                          <--- Working Mode: 3=heating. 5=cooling
     "fn": 1,                          <--- Fan Function: 1=auto, 2=night, 3=min, 4=max
     "kl": 0,
     "lastworkingModeSet": 0,

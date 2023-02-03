@@ -54,6 +54,15 @@ class InnovaDevice(ABC):
 
     @property
     @abstractmethod
+    def water_temperature(self) -> float:
+        pass
+
+    @property
+    def supports_water_temp(self) -> bool:
+        return False
+
+    @property
+    @abstractmethod
     def target_temperature(self) -> float:
         pass
 
@@ -83,7 +92,7 @@ class InnovaDevice(ABC):
         pass
 
     @abstractmethod
-    async def set_temperature(self, temperature: int) -> bool:
+    async def set_temperature(self, temperature: float) -> bool:
         pass
 
     @abstractmethod
@@ -127,7 +136,7 @@ class InnovaDevice(ABC):
         pass
 
     async def _set_mode(self, mode: Mode) -> bool:
-        if await self._network_facade._send_command(mode.command):
+        if await self._network_facade.send_command(mode.command):
             self._status["ps"] = 1
             self._status["wm"] = mode.code
             return True
@@ -155,13 +164,13 @@ class InnovaDevice(ABC):
             return UNKNOWN_MODE
 
     async def power_on(self) -> bool:
-        if await self._network_facade._send_command(CMD_POWER_ON):
+        if await self._network_facade.send_command(CMD_POWER_ON):
             self._status["ps"] = 1
             return True
         return False
 
     async def power_off(self) -> bool:
-        if await self._network_facade._send_command(CMD_POWER_OFF):
+        if await self._network_facade.send_command(CMD_POWER_OFF):
             self._status["ps"] = 0
             return True
         return False

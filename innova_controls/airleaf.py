@@ -55,6 +55,10 @@ class AirLeaf(InnovaDevice):
             return 0
 
     @property
+    def supports_water_temp(self) -> bool:
+        return True
+
+    @property
     def fan_speed(self) -> FanSpeed:
         if "fn" in self._status:
             fn = self.Function.codes.value[self._status["fn"]]
@@ -84,10 +88,10 @@ class AirLeaf(InnovaDevice):
                 return True
         return False
 
-    async def set_temperature(self, temperature: int) -> bool:
-        new_temp = temperature * 100
+    async def set_temperature(self, temperature: float) -> bool:
+        new_temp = temperature * 10
         data = {"temp": new_temp}
-        if await self._network_facade._send_command(CMD_SET_TEMP, data):
+        if await self._network_facade.send_command(CMD_SET_TEMP, data):
             self._status["sp"] = new_temp
             return True
         return False
@@ -101,7 +105,7 @@ class AirLeaf(InnovaDevice):
                 code = function.value["code"]
                 break
 
-        if command and await self._network_facade._send_command(command):
+        if command and await self._network_facade.send_command(command):
             self._status["fn"] = code
             return True
         return False
@@ -113,13 +117,13 @@ class AirLeaf(InnovaDevice):
         return False
 
     async def night_mode_on(self) -> bool:
-        if await self._network_facade._send_command(self.Function.NIGHT.value["cmd"]):
+        if await self._network_facade.send_command(self.Function.NIGHT.value["cmd"]):
             self._status["fn"] = self.Function.NIGHT.value["code"]
             return True
         return False
 
     async def night_mode_off(self) -> bool:
-        if await self._network_facade._send_command(self.Function.AUTO.value["cmd"]):
+        if await self._network_facade.send_command(self.Function.AUTO.value["cmd"]):
             self._status["fn"] = self.Function.AUTO.value["code"]
             return True
         return False
