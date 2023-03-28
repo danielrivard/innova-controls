@@ -93,6 +93,10 @@ class InnovaDevice(ABC):
     def temperature_step(self) -> float:
         pass
 
+    @property
+    def keyboard_locked(self) -> bool:
+        return False
+
     @abstractmethod
     async def set_temperature(self, temperature: float) -> bool:
         pass
@@ -136,6 +140,12 @@ class InnovaDevice(ABC):
     @abstractmethod
     async def set_auto(self) -> bool:
         pass
+
+    async def lock_keyboard(self) -> bool:
+        return False
+
+    async def unlock_keyboard(self) -> bool:
+        return False
 
     async def _set_mode(self, mode: Mode) -> bool:
         if await self._network_facade.send_command(mode.command):
@@ -245,3 +255,7 @@ class InnovaDevice(ABC):
     @property
     def supports_preset(self) -> bool:
         return True
+
+    @property
+    def supports_keyboard_lock(self) -> bool:
+        return False

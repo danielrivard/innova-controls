@@ -14,6 +14,7 @@ if deviceType == "002":
     ambient_temp = ambient_temp * 10
 power = 1
 scheduling = 1
+keyboard_locked = 1
 
 
 def success_response(success=True):
@@ -117,6 +118,20 @@ def calendar_on():
     return success_response()
 
 
+@app.route("/api/v/1/set/lock/off", methods=["POST"])
+def lock_off():
+    global keyboard_locked
+    keyboard_locked = 0
+    return success_response()
+
+
+@app.route("/api/v/1/set/lock/on", methods=["POST"])
+def lock_on():
+    global keyboard_locked
+    keyboard_locked = 1
+    return success_response()
+
+
 @app.route("/api/v/1/status", methods=["GET"])
 def status():
     status = {
@@ -140,7 +155,7 @@ def status():
             "heatingResistance": 0,
             "hotelMode": 0,
             "inputFlags": 0,
-            "kl": 0,
+            "kl": keyboard_locked,
             "lastRefresh": 2,
             "ncc": 0,
             "nm": 0,

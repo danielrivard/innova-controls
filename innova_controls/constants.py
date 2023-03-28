@@ -9,6 +9,8 @@ CMD_SET_TEMP = "set/setpoint"
 CMD_ROTATION = "set/feature/rotation"
 CMD_FAN_SPEED = "set/fan"
 CMD_STATUS = "status"
+CMD_LOCK_OFF = "set/lock/off"
+CMD_LOCK_ON = "set/lock/on"
 
 ROTATION_ON = 0
 ROTATION_OFF = 7

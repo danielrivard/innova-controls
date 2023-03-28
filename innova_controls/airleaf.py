@@ -1,7 +1,7 @@
 from enum import Enum
 from typing import List
 
-from innova_controls.constants import CMD_SET_TEMP
+from innova_controls.constants import CMD_LOCK_OFF, CMD_LOCK_ON, CMD_SET_TEMP
 from innova_controls.fan_speed import FanSpeed
 from innova_controls.innova_device import InnovaDevice
 from innova_controls.mode import Mode
@@ -60,6 +60,17 @@ class AirLeaf(InnovaDevice):
 
     @property
     def supports_water_temp(self) -> bool:
+        return True
+
+    @property
+    def keyboard_locked(self) -> bool:
+        if "kl" in self._status:
+            return self._status["kl"] == 1
+        else:
+            return False
+
+    @property
+    def supports_keyboard_lock(self) -> bool:
         return True
 
     @property
@@ -140,6 +151,18 @@ class AirLeaf(InnovaDevice):
     async def set_cooling(self) -> bool:
         if self.power or await self.power_on():
             return await self._set_mode(self.Modes.COOLING)
+        return False
+    
+    async def lock_keyboard(self) -> bool:
+        if await self._network_facade.send_command(CMD_LOCK_ON):
+            self._status["kl"] = 1
+            return True
+        return False
+    
+    async def unlock_keyboard(self) -> bool:
+        if await self._network_facade.send_command(CMD_LOCK_OFF):
+            self._status["kl"] = 0
+            return True
         return False
 
     async def set_auto(self) -> bool:

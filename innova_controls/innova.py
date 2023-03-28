@@ -146,6 +146,12 @@ class Innova:
         return False
 
     @property
+    def keyboard_locked(self) -> bool:
+        if self._innova_device:
+            return self._innova_device.keyboard_locked
+        return False
+
+    @property
     def model(self) -> str:
         if self._innova_device:
             return self._innova_device.model
@@ -231,6 +237,16 @@ class Innova:
             return await self._innova_device.set_scheduling_off()
         return False
 
+    async def lock_keyboard(self) -> bool:
+        if self._innova_device:
+            return await self._innova_device.lock_keyboard()
+        return False
+    
+    async def unlock_keyboard(self) -> bool:
+        if self._innova_device:
+            return await self._innova_device.unlock_keyboard()
+        return False
+
     async def set_heating(self) -> bool:
         return await self._innova_device.set_heating()
 
@@ -265,3 +281,7 @@ class Innova:
     @property
     def supports_preset(self) -> bool:
         return self._innova_device.supports_preset
+
+    @property
+    def supports_keyboard_lock(self) -> bool:
+        return self._innova_device.supports_keyboard_lock

@@ -23,6 +23,7 @@ async def main():
         print(f"Rotation: {innova.rotation}")
         print(f"Night Mode: {innova.night_mode}")
         print(f"Scheduling Mode: {innova.scheduling_mode}")
+        print(f"Keyboard Locked: {innova.keyboard_locked}")
         modes = []
         for mode in innova.supported_modes:
             if mode.is_cooling:
@@ -42,9 +43,16 @@ async def main():
         await innova.async_update()
         print(f"Scheduling Mode: {innova.scheduling_mode}")
 
+        if innova.supports_keyboard_lock:
+            await innova.lock_keyboard()
+            print(f"Keyboard Locked: {innova.keyboard_locked}")
+            await innova.unlock_keyboard()
+            print(f"Keyboard Locked: {innova.keyboard_locked}")
+            await innova.async_update()
+            print(f"Keyboard Locked: {innova.keyboard_locked}")
+
         # await innova.set_fan_speed(FanSpeed.AUTO)
         # print(innova.fan_speed)
 
-
-loop = asyncio.get_event_loop()
+loop = asyncio.new_event_loop()
 loop.run_until_complete(main())
