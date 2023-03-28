@@ -42,8 +42,8 @@ It is highly recommended to set the IP of your unit to a static DHCP address.
 |Status|GET|/status||Returns json object|
 |Power ON|POST|/power/on|||
 |Power OFF|POST|/power/off|||
-|Scheduling ON|POST|/set/calendar/on||Not implemented by this library|
-|Scheduling OFF (Manual)|POST|/set/calendar/off||Not implemented by this library|
+|Scheduling ON|POST|/set/calendar/on|||
+|Scheduling OFF (Manual)|POST|/set/calendar/off|||
 |Night Mode ON|POST|/set/feature/night|value=1||
 |Night Mode OFF|POST|/set/feature/night|value=0||
 |Set point|POST|/set/setpoint|p_temp=24||
@@ -126,8 +126,8 @@ JSON returned by status endpoint:
 |Status|GET|/status||Returns json object|
 |Power ON|POST|/power/on|||
 |Power OFF|POST|/power/off|||
-|Scheduling ON|POST|/set/calendar/on||Not implemented by this library|
-|Scheduling OFF (Manual)|POST|/set/calendar/off||Not implemented by this library|
+|Scheduling ON|POST|/set/calendar/on|||
+|Scheduling OFF (Manual)|POST|/set/calendar/off|||
 |Set point|POST|/set/setpoint|temp=240|On AirLeaf, temperatures are multiplied by 10|
 |Fan Function Auto|POST|/set/function/auto|value=1||
 |Fan Function Night|POST|/set/function/night|value=1||

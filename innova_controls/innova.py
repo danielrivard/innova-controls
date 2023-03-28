@@ -47,10 +47,12 @@ class Innova:
     async def async_update(self) -> bool:
         data: dict = await self._network_facade.get_status()
 
-        if data:
+        if data and data["success"] is True:
             if self._innova_device is None:
                 self._innova_device = InnovaFactory.get_device(
-                    data["deviceType"], self._network_facade
+                    # Some units don't provide deviceType field, default to none, 
+                    data.get("deviceType", None), 
+                    self._network_facade
                 )
             self._innova_device.set_data(data)
             _LOGGER.debug(f"Received: {data}")
@@ -138,6 +140,18 @@ class Innova:
         return False
 
     @property
+    def scheduling_mode(self) -> bool:
+        if self._innova_device:
+            return self._innova_device.scheduling_mode
+        return False
+
+    @property
+    def model(self) -> str:
+        if self._innova_device:
+            return self._innova_device.model
+        return "Innova Device"
+
+    @property
     def name(self) -> str:
         if self._innova_device:
             return self._innova_device.name
@@ -205,6 +219,16 @@ class Innova:
     async def set_fan_speed(self, speed: FanSpeed) -> bool:
         if self._innova_device:
             return await self._innova_device.set_fan_speed(speed)
+        return False
+
+    async def set_scheduling_on(self) -> bool:
+        if self._innova_device:
+            return await self._innova_device.set_scheduling_on()
+        return False
+
+    async def set_scheduling_off(self) -> bool:
+        if self._innova_device:
+            return await self._innova_device.set_scheduling_off()
         return False
 
     async def set_heating(self) -> bool:

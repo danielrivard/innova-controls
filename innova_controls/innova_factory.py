@@ -14,7 +14,11 @@ class DeviceType(Enum):
 class InnovaFactory:
     @staticmethod
     def get_device(device_type: str, network_facade: NetWorkFunctions) -> InnovaDevice:
-        if device_type == DeviceType.TWOPOINTZERO.value:
+        # Default device type is a 2.0
+        if not device_type:
+            device_type = DeviceType.TWOPOINTZERO.value
+
+        if DeviceType(device_type) == DeviceType.TWOPOINTZERO:
             return TwoPointZero(network_facade)
-        elif device_type == DeviceType.AIRLEAF.value:
+        elif DeviceType(device_type) == DeviceType.AIRLEAF:
             return AirLeaf(network_facade)

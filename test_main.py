@@ -8,8 +8,9 @@ from innova_controls.innova import Innova
 
 async def main():
     async with aiohttp.ClientSession() as session:
-        innova = Innova(session, "192.168.1.20", None, None)
+        innova = Innova(session, "127.0.0.1:5000", None, None)
         await innova.async_update()
+        print(f"Model: {innova.model}")
         print(f"Ambient: {innova.ambient_temp}")
         # await innova.set_temperature(19)
         print(f"Temperature Step: {innova.temperature_step}")
@@ -21,6 +22,7 @@ async def main():
         print(f"Fan Speed: {innova.fan_speed.name}")
         print(f"Rotation: {innova.rotation}")
         print(f"Night Mode: {innova.night_mode}")
+        print(f"Scheduling Mode: {innova.scheduling_mode}")
         modes = []
         for mode in innova.supported_modes:
             if mode.is_cooling:
@@ -35,6 +37,10 @@ async def main():
                 modes.append("HEAT_COOL")
         print(modes)
         print(innova.supported_fan_speeds)
+
+        await innova.set_scheduling_off()
+        await innova.async_update()
+        print(f"Scheduling Mode: {innova.scheduling_mode}")
 
         # await innova.set_fan_speed(FanSpeed.AUTO)
         # print(innova.fan_speed)

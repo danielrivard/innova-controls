@@ -1,5 +1,7 @@
 from innova_controls.mode import Mode
 
+CMD_CALENDAR_OFF = "set/calendar/off"
+CMD_CALENDAR_ON = "set/calendar/on"
 CMD_POWER_ON = "power/on"
 CMD_POWER_OFF = "power/off"
 CMD_NIGHT_MODE = "set/feature/night"

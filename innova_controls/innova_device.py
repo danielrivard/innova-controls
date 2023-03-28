@@ -3,6 +3,8 @@ from abc import ABC, abstractmethod
 from typing import List
 
 from innova_controls.constants import (
+    CMD_CALENDAR_OFF,
+    CMD_CALENDAR_ON,
     CMD_POWER_OFF,
     CMD_POWER_ON,
     MAX_TEMP,
@@ -163,6 +165,12 @@ class InnovaDevice(ABC):
         else:
             return UNKNOWN_MODE
 
+    @property
+    def scheduling_mode(self) -> bool:
+        if "cm" in self._status:
+            return self._status["cm"] == 1
+        return False
+
     async def power_on(self) -> bool:
         if await self._network_facade.send_command(CMD_POWER_ON):
             self._status["ps"] = 1
@@ -174,6 +182,23 @@ class InnovaDevice(ABC):
             self._status["ps"] = 0
             return True
         return False
+
+    async def set_scheduling_on(self) -> bool:
+        if await self._network_facade.send_command(CMD_CALENDAR_ON):
+            self._status["cm"] = 1
+            return True
+        return False
+
+    async def set_scheduling_off(self) -> bool:
+        if await self._network_facade.send_command(CMD_CALENDAR_OFF):
+            self._status["cm"] = 0
+            return True
+        return False
+
+    @property
+    @abstractmethod
+    def model(self) -> str:
+        pass
 
     @property
     def name(self) -> str:

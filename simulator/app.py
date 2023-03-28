@@ -4,7 +4,7 @@ app = Flask(__name__)
 
 deviceType = "001"
 mac_address = "06:1A:02:0A:E4:8D"
-serial = "IN2014752"
+serial = "IN1212121"
 
 water_temp = 215
 target_temp = 20
@@ -12,6 +12,8 @@ ambient_temp = 21
 if deviceType == "002":
     target_temp = target_temp * 10
     ambient_temp = ambient_temp * 10
+power = 1
+scheduling = 1
 
 
 def success_response(success=True):
@@ -20,11 +22,15 @@ def success_response(success=True):
 
 @app.route("/api/v/1/power/on", methods=["POST"])
 def power_on():
+    global power
+    power = 1
     return success_response()
 
 
 @app.route("/api/v/1/power/off", methods=["POST"])
 def power_off():
+    global power
+    power = 0
     return success_response()
 
 
@@ -50,8 +56,6 @@ def rotation():
 
 @app.route("/api/v/1/set/fan", methods=["POST"])
 def fan_rotation():
-    print(request.content_type)
-    print(request.form.to_dict())
     return success_response()
 
 
@@ -99,6 +103,19 @@ def function_min():
 def function_max():
     return success_response()
 
+@app.route("/api/v/1/set/calendar/off", methods=["POST"])
+def calendar_off():
+    global scheduling
+    scheduling = 0
+    return success_response()
+
+
+@app.route("/api/v/1/set/calendar/on", methods=["POST"])
+def calendar_on():
+    global scheduling
+    scheduling = 1
+    return success_response()
+
 
 @app.route("/api/v/1/status", methods=["GET"])
 def status():
@@ -110,7 +127,7 @@ def status():
             "cfg_lastWorkingMode": 0,
             "cloudConfig": 1,
             "cloudStatus": 4,
-            "cm": 0,
+            "cm": scheduling,
             "connectionStatus": 2,
             "coolingDisabled": 0,
             "cp": 0,
@@ -128,7 +145,7 @@ def status():
             "ncc": 0,
             "nm": 0,
             "ns": 0,
-            "ps": 1,
+            "ps": power,
             "pwd": "",
             "sp": target_temp,
             "t": ambient_temp,
@@ -155,6 +172,5 @@ def status():
     return jsonify(status)
 
 
-print(__name__)
 if __name__ == "__main__":
     app.run(debug=True, host="0.0.0.0")

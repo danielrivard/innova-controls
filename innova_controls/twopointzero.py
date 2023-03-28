@@ -44,6 +44,10 @@ class TwoPointZero(InnovaDevice):
         super().__init__(network_facade)
 
     @property
+    def model(self) -> str:
+        return "TwoPointZero (2.0)"
+
+    @property
     def temperature_step(self) -> float:
         return 1.0
 
@@ -125,6 +129,7 @@ class TwoPointZero(InnovaDevice):
     async def night_mode_on(self) -> bool:
         data = {"value": NIGHT_MODE_ON}
         if await self._network_facade.send_command(CMD_NIGHT_MODE, data=data):
+            await self.set_fan_speed(FanSpeed.LOW)
             self._status["nm"] = NIGHT_MODE_ON
             return True
         return False

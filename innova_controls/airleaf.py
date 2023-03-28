@@ -30,6 +30,10 @@ class AirLeaf(InnovaDevice):
         super().__init__(network_facade)
 
     @property
+    def model(self) -> str:
+        return "AirLeaf"
+
+    @property
     def temperature_step(self) -> float:
         return 0.5
 
