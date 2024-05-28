@@ -1,5 +1,5 @@
 import logging
-from typing import List
+from collections.abc import Iterable
 
 from aiohttp import ClientSession
 
@@ -110,9 +110,9 @@ class Innova:
         return UNKNOWN_MODE
 
     @property
-    def supported_modes(self) -> List[Mode]:
+    def supported_modes(self) -> Iterable[Mode]:
         if self._innova_device:
-            return list(self._innova_device.Modes.get_supported_modes())
+            return self._innova_device.Modes.get_supported_modes()
         return []
 
     @property
@@ -128,7 +128,7 @@ class Innova:
         return 0
 
     @property
-    def supported_fan_speeds(self) -> List[FanSpeed]:
+    def supported_fan_speeds(self) -> Iterable[FanSpeed]:
         if self._innova_device:
             return self._innova_device.supported_fan_speeds
         return []

@@ -1,15 +1,9 @@
-from typing import List
+from collections.abc import Iterable
 
-from innova_controls.constants import (
-    CMD_FAN_SPEED,
-    CMD_NIGHT_MODE,
-    CMD_ROTATION,
-    CMD_SET_TEMP,
-    NIGHT_MODE_OFF,
-    NIGHT_MODE_ON,
-    ROTATION_OFF,
-    ROTATION_ON,
-)
+from innova_controls.constants import (CMD_FAN_SPEED, CMD_NIGHT_MODE,
+                                       CMD_ROTATION, CMD_SET_TEMP,
+                                       NIGHT_MODE_OFF, NIGHT_MODE_ON,
+                                       ROTATION_OFF, ROTATION_ON)
 from innova_controls.fan_speed import FanSpeed
 from innova_controls.innova_device import InnovaDevice
 from innova_controls.mode import Mode
@@ -37,8 +31,14 @@ class TwoPointZero(InnovaDevice):
         1: FanSpeed.LOW,
         2: FanSpeed.MEDIUM,
         3: FanSpeed.HIGH,
+        # Fan Speed 4 is a Boost mode, but it is not supported by the API.
+        # Only the remote and the LCD screen can set this speed.
+        # Therefore, I chose to default to report HIGH as the speed 
+        # since this value cannot be passed to set_fan_speed.
+        4: FanSpeed.HIGH,
     }
-    fan_speeds_reverse: dict = {v: k for k, v in fan_speeds.items()}
+    # Ignore speed 4 for reasons explained above
+    fan_speeds_reverse = {v: k for k, v in fan_speeds.items() if k != 4}
 
     def __init__(self, network_facade: NetWorkFunctions) -> None:
         super().__init__(network_facade)
@@ -76,8 +76,9 @@ class TwoPointZero(InnovaDevice):
         return FanSpeed.AUTO
 
     @property
-    def supported_fan_speeds(self) -> List[FanSpeed]:
-        return list(self.fan_speeds.values())
+    def supported_fan_speeds(self) -> Iterable[FanSpeed]:
+        # Use a set to remove duplicates
+        return set(self.fan_speeds.values())
 
     @property
     def rotation(self) -> bool:
