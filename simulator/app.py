@@ -17,8 +17,11 @@ scheduling = 1
 keyboard_locked = 1
 
 
-def success_response(success=True):
-    return jsonify({"success": success})
+def success_response(success=True, message: str = None):
+    response = {"success": success}
+    if message:
+        response['message'] = message
+    return jsonify(response)
 
 
 @app.route("/api/v/1/power/on", methods=["POST"])
@@ -43,11 +46,12 @@ def night_mode():
 @app.route("/api/v/1/set/setpoint", methods=["POST"])
 def set_point():
     print(request.content_type)
+    params = {}
     if request.content_type == "application/x-www-form-urlencoded":
-        print(request.form.to_dict())
+        params = request.form.to_dict()
     if request.content_type == "application/json":
-        print(request.json)
-    return success_response()
+        params = request.json
+    return success_response(message=f'Received set point {params}')
 
 
 @app.route("/api/v/1/set/feature/rotation", methods=["POST"])

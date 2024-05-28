@@ -1,16 +1,10 @@
 import logging
 from abc import ABC, abstractmethod
-from typing import List
+from collections.abc import Iterable
 
-from innova_controls.constants import (
-    CMD_CALENDAR_OFF,
-    CMD_CALENDAR_ON,
-    CMD_POWER_OFF,
-    CMD_POWER_ON,
-    MAX_TEMP,
-    MIN_TEMP,
-    UNKNOWN_MODE,
-)
+from innova_controls.constants import (CMD_CALENDAR_OFF, CMD_CALENDAR_ON,
+                                       CMD_POWER_OFF, CMD_POWER_ON, MAX_TEMP,
+                                       MIN_TEMP, UNKNOWN_MODE)
 from innova_controls.fan_speed import FanSpeed
 from innova_controls.mode import Mode
 from innova_controls.network_functions import NetWorkFunctions
@@ -23,7 +17,7 @@ class InnovaDevice(ABC):
         codes: dict = None
 
         @classmethod
-        def get_supported_modes(cls) -> List[Mode]:
+        def get_supported_modes(cls) -> Iterable[Mode]:
             return cls.codes.values()
 
         @classmethod
@@ -75,7 +69,7 @@ class InnovaDevice(ABC):
 
     @property
     @abstractmethod
-    def supported_fan_speeds(self) -> List[FanSpeed]:
+    def supported_fan_speeds(self) -> Iterable[FanSpeed]:
         pass
 
     @property

@@ -1,5 +1,5 @@
+from collections.abc import Iterable
 from enum import Enum
-from typing import List
 
 from innova_controls.constants import CMD_LOCK_OFF, CMD_LOCK_ON, CMD_SET_TEMP
 from innova_controls.fan_speed import FanSpeed
@@ -85,12 +85,11 @@ class AirLeaf(InnovaDevice):
         return FanSpeed.AUTO
 
     @property
-    def supported_fan_speeds(self) -> List[FanSpeed]:
-        speeds: List[FanSpeed] = []
-        for function in self.Function:
-            if "fan" in function.value and function.value["fan"] is not None:
-                speeds.append(function.value["fan"])
-        return speeds
+    def supported_fan_speeds(self) -> Iterable[FanSpeed]:
+        return [
+            function.value['fan'] for function in self.Function
+            if function.value.get('fan') is not None
+        ]
 
     @property
     def rotation(self) -> bool:
