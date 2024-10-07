@@ -1,2 +1,2 @@
 retry2==0.9.5
-aiohttp==3.10.8
+aiohttp==3.10.9
