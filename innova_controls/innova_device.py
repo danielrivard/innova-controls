@@ -89,7 +89,7 @@ class InnovaDevice(ABC):
 
     @property
     def keyboard_locked(self) -> bool:
-        if "ps" in self._status:
+        if "kl" in self._status:
             return self._status["kl"] == 1
         return False
 
