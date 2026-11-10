@@ -1,11 +1,19 @@
+import asyncio
 import logging
 
-from aiohttp import ClientConnectionError, ClientSession, ServerTimeoutError
-from retry import retry
+from aiohttp import (
+    ClientConnectionError,
+    ClientResponse,
+    ClientSession,
+    ServerTimeoutError,
+)
 
 from innova_controls.constants import CMD_STATUS, CONNECTION_TIMEOUT
 
 _LOGGER = logging.getLogger(__name__)
+
+RETRY_ATTEMPTS = 2
+RETRY_DELAY = 2
 
 
 class NetWorkFunctions:
@@ -30,17 +38,35 @@ class NetWorkFunctions:
             self._api_url = "http://innovaenergie.cloud/api/v/1"
             self._headers = {"X-serial": serial, "X-UID": uid}
 
-    @retry(exceptions=Exception, tries=2, delay=2, logger=_LOGGER, log_traceback=True)
+    async def _request(self, method: str, url: str, **kwargs) -> ClientResponse:
+        """Send a request, retrying on connection errors and timeouts.
+
+        The body is read before returning so callers can use json()/text()
+        without another network round trip.
+        """
+        for attempt in range(1, RETRY_ATTEMPTS + 1):
+            try:
+                r = await self._http_session.request(
+                    method,
+                    url,
+                    headers=self._headers,
+                    timeout=CONNECTION_TIMEOUT,
+                    **kwargs,
+                )
+                await r.read()
+                return r
+            except (ClientConnectionError, asyncio.TimeoutError) as e:
+                if attempt == RETRY_ATTEMPTS:
+                    raise
+                _LOGGER.debug(
+                    "Request to %s failed (%s), retrying in %ss", url, e, RETRY_DELAY
+                )
+                await asyncio.sleep(RETRY_DELAY)
+
     async def send_command(self, command, data=None, json=None) -> bool:
         cmd_url = f"{self._api_url}/{command}"
         try:
-            r = await self._http_session.post(
-                cmd_url,
-                data=data,
-                json=json,
-                headers=self._headers,
-                timeout=CONNECTION_TIMEOUT,
-            )
+            r = await self._request("POST", cmd_url, data=data, json=json)
 
             if r.status == 200:
                 result = await r.json(content_type=r.content_type)
@@ -55,13 +81,10 @@ class NetWorkFunctions:
             _LOGGER.error(f"Error while sending command {cmd_url}", e)
             return False
 
-    @retry(exceptions=Exception, tries=2, delay=2, logger=_LOGGER, log_traceback=True)
     async def get_status(self) -> dict:
         status_url = f"{self._api_url}/{CMD_STATUS}"
         try:
-            r = await self._http_session.get(
-                status_url, headers=self._headers, timeout=CONNECTION_TIMEOUT
-            )
+            r = await self._request("GET", status_url)
             data: dict = await r.json(content_type=r.content_type)
             if data and data["success"] and "RESULT" in data:
                 return data
