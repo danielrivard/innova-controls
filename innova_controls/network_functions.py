@@ -52,7 +52,7 @@ class NetWorkFunctions:
         except ClientConnectionError:
             return False
         except Exception as e:
-            _LOGGER.error(f"Error while sending command {cmd_url}", e)
+            _LOGGER.error("Error while sending command %s: %s", cmd_url, e)
             return False
 
     @retry(exceptions=Exception, tries=2, delay=2, logger=_LOGGER, log_traceback=True)
@@ -66,8 +66,10 @@ class NetWorkFunctions:
             if data and data["success"] and "RESULT" in data:
                 return data
             else:
-                _LOGGER.error(f"Error contacting the unit with response {r.text}")
+                _LOGGER.error(
+                    "Error contacting the unit with response %s", await r.text()
+                )
                 return None
         except Exception as e:
-            _LOGGER.error(f"Error getting status {status_url}", e)
+            _LOGGER.error("Error getting status %s: %s", status_url, e)
             return None
